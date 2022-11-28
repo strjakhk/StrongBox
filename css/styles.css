@@ -180,7 +180,7 @@ nav a:hover{
 /* Add button */
 
 .button{
-    background-color: #335985;
+    background-color: #243B55;
     border-radius: 3px;
     cursor: pointer;
     width: 120px;
@@ -190,7 +190,7 @@ nav a:hover{
 
 .button:hover{
     background-color: #ccc;
-    color: #335985;
+    color: #243B55;
 }
 
 /* Lista TABLE */
