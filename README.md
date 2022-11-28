@@ -9,3 +9,6 @@ El usuario puede agregar un elemento en la caja fuerte, cada elemento va a inclu
 Los elementos de la caja fuerte van a guardarse en una base de datos local. Mi idea es que las contraseñas en esa base de datos se guarden cifradas.
 
 También se agregarán herramientas adicionales como un generador de contraseñas.
+
+
+https://strjakhk.github.io/StrongBox/
