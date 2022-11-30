@@ -126,5 +126,11 @@ export class TrStrongBoxElement{
         }else{
             return (-2000)
         }
+
+        // passlvl = -1000  -> Error, la contraseña no puede contener espacios
+        // passlvl = -2000  -> Error, cadena vacía
+        // passlvl = -1 a 2 -> Contraseña debil
+        // passlvl =  2 a 4 -> Contraseña normal
+        // passlvl =  4 a 6 -> Contraseña fuerte
     }
 }
