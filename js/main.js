@@ -1,3 +1,5 @@
+import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
+
 
 // Mostrar lista de elementos
 
@@ -40,3 +42,10 @@ const agregarElemento = (elemento) =>{
 // Se llama a la función cuando el usuario hace click en el botón de "Añadir elemento"
 
 agregarElemento(elemento)
+
+
+// a aplicar
+
+
+const ele = new TrStrongBoxElement("https://juan.com", "sss", "askdjaskd!!!", "test")
+
