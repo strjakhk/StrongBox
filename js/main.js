@@ -48,15 +48,15 @@ agregarElemento(elemento)
 
 
 const listaItems = [
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
 ]
 
 const table = document.getElementById('strongbox-items')
