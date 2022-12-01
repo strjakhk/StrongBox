@@ -44,8 +44,23 @@ const agregarElemento = (elemento) =>{
 agregarElemento(elemento)
 
 
-// a aplicar
+// creando lista de items
 
 
-const ele = new TrStrongBoxElement("https://juan.com", "sss", "askdjaskd!!!", "test")
+const listaItems = [
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://strackjuanp.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
+]
 
+const table = document.getElementById('strongbox-items')
+
+for(let i = 0; i < listaItems.length; i++){
+    table.appendChild(listaItems[i].htmlTableRowElement)
+}
