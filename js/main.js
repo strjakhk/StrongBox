@@ -29,7 +29,7 @@ function noHayElementos(){
     console.log("No hay elementos que mostrar")
 }
 
-mostrarElementos(lista)
+mostrarElementos(listaItems)
 
 // Boton para añadir elementos en la caja fuerte
 
