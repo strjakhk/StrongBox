@@ -1,51 +1,6 @@
 import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
-
-// Mostrar lista de elementos
-
-const lista = ["ele1", "ele2", "ele3"]
-const contadorDeElementos = lista.length // En la interfaz, siempre se va a mostrar la cantidad de elementos en la caja fuerte
-
-const mostrarElementos = (lista) =>{
-    if(lista.length > 0){
-        for(let i = 0; i < lista.length; i++){
-            agregarItem(lista[i], i)
-        }
-    }else{
-        noHayElementos()
-    }    
-}
-
-function noHayElementos(){
-    console.log("No hay elementos que mostrar")
-}
-
-function agregarItem(elemento, i){
-    console.log(`Elemento número ${i + 1} = ${elemento}`)
-}
-
-mostrarElementos(lista)
-
-// Boton para añadir elementos en la caja fuerte
-
-const elemento = "Un elemento agregado por el usuario"
-
-const agregarElemento = (elemento) =>{
-
-    if(elemento){
-        console.log("Elemento añadido a la base de datos")
-    }else{
-        console.log("No se pudo agregar el elemento")
-    }
-}
-
-// Se llama a la función cuando el usuario hace click en el botón de "Añadir elemento"
-
-agregarElemento(elemento)
-
-
-// creando lista de items
-
+// Creando un array con los items a mostrar (luego, se va a implementar una base de datos local para que el array se llene con los objetos de esa bd)
 
 const listaItems = [
     new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
@@ -59,8 +14,36 @@ const listaItems = [
     new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
 ]
 
-const table = document.getElementById('strongbox-items')
+const mostrarElementos = (listaItems) =>{
+    if(listaItems.length > 0){
+        const table = document.getElementById('strongbox-items')
+        for(let i = 0; i < listaItems.length; i++){
+            table.appendChild(listaItems[i].htmlTableRowElement)
+        }
+    }else{
+        noHayElementos()
+    }
+}
 
-for(let i = 0; i < listaItems.length; i++){
-    table.appendChild(listaItems[i].htmlTableRowElement)
+function noHayElementos(){
+    console.log("No hay elementos que mostrar")
+}
+
+mostrarElementos(lista)
+
+// Boton para añadir elementos en la caja fuerte
+
+const elemento = {
+    // objeto con los datos que el usuario ingresa en el formulario para añadir un elemento
+}
+
+const agregarElemento = (elemento) =>{
+
+    // con esta funcion se va a agregar el elemento directamente en la base de datos, no en el array
+
+    if(elemento){
+        console.log("Elemento añadido a la base de datos")
+    }else{
+        console.log("No se pudo agregar el elemento")
+    }
 }
