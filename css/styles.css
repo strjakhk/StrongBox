@@ -212,18 +212,34 @@ nav a:hover{
 /* td class */
 
 .td-list-element{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 100%;
+    margin: 1px;
     color: #ccc;
 }
 
-.td-list-element a{
-    color: #335985;
-    padding-left: 8px;
+.td-list-element:nth-child(1){
+    flex: 0.5;    
+}
+.td-list-element:nth-child(2){
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+.td-list-element:nth-child(3){
+    flex: 1;
+    order: 4;
+}
+.td-list-element:nth-child(4){
+    flex: 1.5;
+    order: 3;
 }
 
-.td-list-element i{
+.td-list-element:nth-child(2) a{
+    color: #335985;
+}
+
+.td-list-element:nth-child(1) i{
     transform: scale(0.8);
 }
 
