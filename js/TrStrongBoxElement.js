@@ -5,7 +5,6 @@ export class TrStrongBoxElement{
     #_usuario
     #_password
     #_descripcion
-    #_htmlTableRowElement
     #_enFavoritos
     #_enPapelera
 
@@ -37,14 +36,10 @@ export class TrStrongBoxElement{
         
         this.#_descripcion = descripcion
 
-        this.#_htmlTableRowElement = document.createElement("tr")
-        this.#_htmlTableRowElement.innerHTML = `\
-        <td class="td-list-element"><i><img src="${this.url.icon}" alt="url icon"></i></td>
-        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.dominio}</a><span>${this.usuario}</span></td>
-        <td class="td-list-element"><button><i></i>pass</button></td>
-        <td class="td-list-element">${this.descripcion}</td>
-        `
+        // En el constructor de la clase, se va a generar también el elemento html (nodo) con todos los datos del objeto instanciado
     }
+
+    ///////////////////////////////////////////////////////
 
     // FAV & TRASH
     
@@ -84,7 +79,6 @@ export class TrStrongBoxElement{
                 icon : undefined
             }
         }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
     // USUARIO
@@ -94,7 +88,6 @@ export class TrStrongBoxElement{
     }
     set usuario(usuario){
         this.#_usuario = usuario
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
     // PASSWORD
@@ -107,7 +100,6 @@ export class TrStrongBoxElement{
             valor : password,
             level : this.#passLevel(password)
         }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
     // DESCRIPCION
@@ -117,24 +109,9 @@ export class TrStrongBoxElement{
     }
     set descripcion(descripcion){
         this.#_descripcion = descripcion
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
-    // HTMLTableRowElement
-    // el metodo set genera el elemento html con los datos de la instancia del objeto, pero solo puede llamarse desde los otros métodos setters.
-    // de esta forma los datos del elemento html se actualizan cada vez que el usuario llama a un método set (por ejemplo, cuando quieran actualizar un dato)
-
-    get htmlTableRowElement(){
-        return this.#_htmlTableRowElement
-    }
-    set #HtmlTableRowElement(htmlTableRowElement){
-        this.#_htmlTableRowElement.innerHTML = `\
-        <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a></td>
-        <td class="td-list-element">${htmlTableRowElement.usuario}</td>
-        <td class="td-list-element">${htmlTableRowElement.password.valor}</td>
-        <td class="td-list-element">${htmlTableRowElement.descripcion}</td>
-        `
-    }
+    ///////////////////////////////////////////////////////
 
     // Metodo privado para obtener el nivel de la contraseña
 
