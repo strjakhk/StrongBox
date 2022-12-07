@@ -63,4 +63,6 @@ const buscarElemento = () =>{
     return resultado
 }
 
-console.log(buscarElemento())
+mostrarElementos(buscarElemento())
+
+
