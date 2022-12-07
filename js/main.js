@@ -4,14 +4,14 @@ import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
 const listaItems = [
     new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://facebook.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://youtube.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://instagram.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://twitter.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://github.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://w3schools.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://facebook.com", "almeds", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://youtube.com", "rifac", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://instagram.com", "usuario22", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://twitter.com", "trec21", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://github.com", "findinguser", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://w3schools.com", "strjakHK", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
     new TrStrongBoxElement("http://mozilla.org", "juan", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://regex101.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
+    new TrStrongBoxElement("https://regex101.com", "strack", "skai!s00A1-?!ssgj2", "elemento de pruebas")
 ]
 
 // Mostrar todos los elementos
@@ -39,7 +39,7 @@ const agregarElemento = () =>{
     // con esta funcion se va a agregar el elemento directamente en la base de datos, no en el array
 
     const elemento = {
-        url : prompt("Url"),
+        url : prompt("Url (se debe ingresar la url con protocolo http o https)"),
         usuario : prompt("Usuario"),
         pass : prompt("Contraseña"),
         descripcion : prompt("Descripcion")

@@ -1,6 +1,6 @@
 export class TrStrongBoxElement{
 
-    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g // uso un objeto de tipo RegExp porque con string.Match() no puedo usar "{}$" para matchear el final de una linea
+    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g
     #_url
     #_usuario
     #_password
@@ -87,7 +87,12 @@ export class TrStrongBoxElement{
         return this.#_usuario
     }
     set usuario(usuario){
-        this.#_usuario = usuario
+        if(!usuario.match(/\s/) || usuario.length > 3){
+            this.#_usuario = usuario
+        }else{
+            this.#_usuario = undefined
+        }
+        
     }
 
     // PASSWORD
@@ -108,7 +113,11 @@ export class TrStrongBoxElement{
         return this.#_descripcion
     }
     set descripcion(descripcion){
-        this.#_descripcion = descripcion
+        if(descripcion.length < 20){
+            this.#_descripcion = descripcion
+        }else{
+            this.#_descripcion = undefined
+        }        
     }
 
     ///////////////////////////////////////////////////////
