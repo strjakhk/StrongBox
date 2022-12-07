@@ -56,7 +56,7 @@ agregarElemento()
 // Buscar un elemento por url o dominio
 
 const buscarElemento = () =>{
-    const buscar = prompt("")
+    const buscar = prompt("Ingrese elemento a buscar")
     const resultado = listaItems.filter((elemento) =>{
         return elemento.url.valor.match(buscar) || elemento.usuario.match(buscar)
     })
