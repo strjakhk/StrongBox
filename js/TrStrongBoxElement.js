@@ -1,13 +1,13 @@
 export class TrStrongBoxElement{
 
-    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g // uso un objeto de tipo RegExp porque con string.Match() no puedo usar "{}$" para matchear el final de una linea
+    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g
     #_url
     #_usuario
     #_password
     #_descripcion
-    #_htmlTableRowElement
     #_enFavoritos
     #_enPapelera
+    #_htmlTableRowElement
 
     constructor(url, usuario, password, descripcion){
 
@@ -40,11 +40,13 @@ export class TrStrongBoxElement{
         this.#_htmlTableRowElement = document.createElement("tr")
         this.#_htmlTableRowElement.innerHTML = `\
         <td class="td-list-element"><i><img src="${this.url.icon}" alt="url icon"></i></td>
-        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.dominio}</a><span>${this.usuario}</span></td>
-        <td class="td-list-element"><button><i></i>pass</button></td>
+        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.valor}</a>${this.usuario}</td>
+        <td class="td-list-element">${this.password.valor}</td>
         <td class="td-list-element">${this.descripcion}</td>
         `
     }
+
+    ///////////////////////////////////////////////////////
 
     // FAV & TRASH
     
@@ -84,7 +86,7 @@ export class TrStrongBoxElement{
                 icon : undefined
             }
         }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+        htmlTableRowElement({url: this.url, usuario: this.usuario, password: this.password, descripcion: this.descripcion})
     }
 
     // USUARIO
@@ -93,8 +95,12 @@ export class TrStrongBoxElement{
         return this.#_usuario
     }
     set usuario(usuario){
-        this.#_usuario = usuario
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+        if(!usuario.match(/\s/) || usuario.length > 3){
+            this.#_usuario = usuario
+        }else{
+            this.#_usuario = undefined
+        }
+        htmlTableRowElement({url: this.url, usuario: this.usuario, password: this.password, descripcion: this.descripcion})
     }
 
     // PASSWORD
@@ -107,7 +113,7 @@ export class TrStrongBoxElement{
             valor : password,
             level : this.#passLevel(password)
         }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+        htmlTableRowElement({url: this.url, usuario: this.usuario, password: this.password, descripcion: this.descripcion})
     }
 
     // DESCRIPCION
@@ -116,25 +122,29 @@ export class TrStrongBoxElement{
         return this.#_descripcion
     }
     set descripcion(descripcion){
-        this.#_descripcion = descripcion
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+        if(descripcion.length < 20){
+            this.#_descripcion = descripcion
+        }else{
+            this.#_descripcion = undefined
+        }
+        htmlTableRowElement({url: this.url, usuario: this.usuario, password: this.password, descripcion: this.descripcion})
     }
 
-    // HTMLTableRowElement
-    // el metodo set genera el elemento html con los datos de la instancia del objeto, pero solo puede llamarse desde los otros métodos setters.
-    // de esta forma los datos del elemento html se actualizan cada vez que el usuario llama a un método set (por ejemplo, cuando quieran actualizar un dato)
+    // HTML NODE
 
     get htmlTableRowElement(){
         return this.#_htmlTableRowElement
     }
     set #HtmlTableRowElement(htmlTableRowElement){
         this.#_htmlTableRowElement.innerHTML = `\
-        <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a></td>
-        <td class="td-list-element">${htmlTableRowElement.usuario}</td>
+        <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i></td>
+        <td class="td-list-element"><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a>${htmlTableRowElement.usuario}</td>
         <td class="td-list-element">${htmlTableRowElement.password.valor}</td>
         <td class="td-list-element">${htmlTableRowElement.descripcion}</td>
         `
     }
+
+    ///////////////////////////////////////////////////////
 
     // Metodo privado para obtener el nivel de la contraseña
 
