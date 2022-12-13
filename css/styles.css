@@ -163,6 +163,7 @@ nav a:hover{
 }
 
 .strongbox-content section:nth-child(2) div:nth-child(1){
+    position: relative;
     display: flex;
     justify-content: space-between;
 
@@ -191,6 +192,28 @@ nav a:hover{
 .button:hover{
     background-color: #ccc;
     color: #243B55;
+}
+
+/* Add FORM */
+
+.add-form{
+    z-index: 1000;
+    position: absolute;
+    right: 0px;
+
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+
+    background-color: #232526;
+    border: 1px #aaa solid;
+    border-radius: 5px;
+    
+}
+
+.add-form > form{
+    display: flex;
+    flex-direction: column;
 }
 
 /* Lista TABLE */
