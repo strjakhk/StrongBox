@@ -1,5 +1,16 @@
 import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
+//////////////// SEARCH ITEMS    ////////////////
+const searchInputNode = document.querySelector("#search")
+
+searchInputNode.oninput = (e) =>{
+    console.log(e.target.value)
+    const itemsFound = listaItems.filter((elemento) =>{
+        return elemento.url.valor.match(e.target.value) || elemento.usuario.match(e.target.value)
+    })
+    mostrarElementos(itemsFound)
+}
+
 //////////////// FORM VALIDATION ////////////////
 const addButton = document.querySelector("#add-button")
 addButton.onclick = () => {
@@ -54,19 +65,20 @@ function onInvalidHandler(e){
 
 const listaItems = [
     new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
+    new TrStrongBoxElement("https://facebook.com", "almeds", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://youtube.com", "rifac", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://instagram.com", "usuario22", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://twitter.com", "trec21", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://github.com", "findinguser", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://w3schools.com", "strjakHK", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://mozilla.org", "juan", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://regex101.com", "strack", "skai!s00A1-?!ssgj2", "elemento de pruebas")
 ]
 
-const mostrarElementos = (listaItems) =>{
+function mostrarElementos(listaItems){
     if(listaItems.length > 0){
-        const table = document.getElementById('strongbox-items')
+        const table = document.querySelector("#strongbox-items")
+        table.innerHTML = ""
         for(let i = 0; i < listaItems.length; i++){
             table.appendChild(listaItems[i].htmlTableRowElement)
         }
@@ -76,7 +88,12 @@ const mostrarElementos = (listaItems) =>{
 }
 
 function noHayElementos(){
-    console.log("No hay elementos que mostrar")
+    const table = document.getElementById('strongbox-items')
+    table.innerHTML = `
+    <div>
+        <h1>No hay elementos que mostrar</h1>
+    </div>
+    `
 }
 
 mostrarElementos(listaItems)

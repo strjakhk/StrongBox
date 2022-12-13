@@ -40,7 +40,7 @@ export class TrStrongBoxElement{
         this.#_htmlTableRowElement = document.createElement("tr")
         this.#_htmlTableRowElement.innerHTML = `\
         <td class="td-list-element"><i><img src="${this.url.icon}" alt="url icon"></i></td>
-        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.valor}</a>${this.usuario}</td>
+        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.dominio}</a>${this.usuario}</td>
         <td class="td-list-element">${this.password.valor}</td>
         <td class="td-list-element">${this.descripcion}</td>
         `
@@ -138,7 +138,7 @@ export class TrStrongBoxElement{
     set #HtmlTableRowElement(htmlTableRowElement){
         this.#_htmlTableRowElement.innerHTML = `\
         <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i></td>
-        <td class="td-list-element"><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a>${htmlTableRowElement.usuario}</td>
+        <td class="td-list-element"><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.dominio}</a>${htmlTableRowElement.usuario}</td>
         <td class="td-list-element">${htmlTableRowElement.password.valor}</td>
         <td class="td-list-element">${htmlTableRowElement.descripcion}</td>
         `
