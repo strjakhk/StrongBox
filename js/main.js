@@ -16,43 +16,53 @@ const addButton = document.querySelector("#add-button")
 addButton.onclick = () => {
     const buttonSection = document.querySelector(".strongbox-content section:nth-child(2) div:nth-child(1)")
     const addItemForm = document.createElement("div")
-    
+
     addItemForm.innerHTML = `
-    <form action="#" id="add-button-form">
+    <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
+    <div id="clear"></div>
+    <form id="add-button-form">
         <input type="url" name="url" id="url" placeholder=" url" required>
         <input type="text" name="user" id="user" placeholder=" usuario" pattern=".{3,}" required>
         <input type="password" name="pass" id="pass" placeholder=" contraseña" required>
         <input type="text" name="description" id="description" placeholder=" descripcion" maxlength="20" required>
-        <button type="submit">Añadir</button>
+        <input type="submit" value="agregar">
     </form>
     `
+    // cambiar button por input type submit
     addItemForm.classList.add("add-form")
     buttonSection.appendChild(addItemForm)
 
     const formulario = document.getElementById("add-button-form")
+    const closeButton = document.getElementById("close")
+    closeButton.addEventListener("click", closeHandler)
     formulario.addEventListener("input", onInputHandler)
     formulario.addEventListener("invalid", onInvalidHandler, true)
-    formulario[4].addEventListener("click", onClickHandler) // submit button
+    formulario.addEventListener("submit", onSubmitHandler)
 }
 
-function onClickHandler(e){
-    const formulario = e.target.parentNode
+function closeHandler(){
+    document.querySelector(".add-form").remove()
+}
+
+function onSubmitHandler(e){
+    e.preventDefault()
+    const formulario = e.target
     if(formulario.checkValidity()){
         agregarElemento(new TrStrongBoxElement(
             formulario.children[0].value,
             formulario.children[1].value,
             formulario.children[2].value,
             formulario.children[3].value
-        ))
-        formulario.reset()
+        ))        
+        formulario.parentElement.remove()
     }
 }
 
 function onInputHandler(e){
     if(!e.target.checkValidity() && e.target.value != ""){
-        e.target.style.backgroundColor = "rgba(255, 0, 0, 0.1)"
+        e.target.style.backgroundColor = "rgba(255, 0, 0, 0.2)"
     }else{
-        e.target.style.backgroundColor = "rgba(255, 255, 255, 1)"
+        e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
     }
 }
 
