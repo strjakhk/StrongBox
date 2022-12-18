@@ -1,7 +1,41 @@
 import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
-//////////////// SEARCH ITEMS    ////////////////
-const searchInputNode = document.querySelector("#search")
+//////////////// SHOW ITEMS ////////////////
+
+const listaItems = [
+    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://facebook.com", "almeds", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://youtube.com", "rifac", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://instagram.com", "usuario22", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://twitter.com", "trec21", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://github.com", "findinguser", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://w3schools.com", "strjakHK", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("http://mozilla.org", "juan", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
+    new TrStrongBoxElement("https://regex101.com", "strack", "skai!s00A1-?!ssgj2", "elemento de pruebas")
+]
+
+function mostrarElementos(listaItems){
+    const table = document.getElementById('strongbox-items')
+    if(listaItems.length > 0){
+        table.innerHTML = ""
+        for(let i = 0; i < listaItems.length; i++){
+            table.appendChild(listaItems[i].htmlTableRowElement)
+        }
+    }else{
+        table.innerHTML = `
+        <div>
+            <h1>No hay elementos que mostrar</h1>
+        </div>
+        `
+    }
+}
+
+mostrarElementos(listaItems)
+
+// LISTENERS PARA DELETE, FAV Y PASS hacerlos en la función "mostrarElementos", que es la que inserta los elementos en el DOM
+
+//////////////// SEARCH ITEMS ////////////////
+const searchInputNode = document.getElementById("search")
 
 searchInputNode.oninput = (e) =>{
     console.log(e.target.value)
@@ -11,8 +45,16 @@ searchInputNode.oninput = (e) =>{
     mostrarElementos(itemsFound)
 }
 
+//////////////// ADD ITEMS ////////////////
+
+function agregarElemento(elemento){
+    // con esta funcion se va a agregar el elemento directamente en la base de datos, no en el array
+    listaItems.push(elemento)
+    mostrarElementos(listaItems)
+}
+
 //////////////// FORM VALIDATION ////////////////
-const addButton = document.querySelector("#add-button")
+const addButton = document.getElementById("add-button")
 addButton.onclick = () => {
     const buttonSection = document.querySelector(".strongbox-content section:nth-child(2) div:nth-child(1)")
     const addItemForm = document.createElement("div")
@@ -28,7 +70,6 @@ addButton.onclick = () => {
         <input type="submit" value="agregar">
     </form>
     `
-    // cambiar button por input type submit
     addItemForm.classList.add("add-form")
     buttonSection.appendChild(addItemForm)
 
@@ -70,48 +111,4 @@ function onInvalidHandler(e){
     console.log("invalid") // crear mensaje personalizado para que se muestre al apretar el boton de enviar
 }
 
-////////////////
-// Creando un array con los items a mostrar (luego, se va a implementar una base de datos local para que el array se llene con los objetos de esa bd)
-
-const listaItems = [
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://facebook.com", "almeds", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://youtube.com", "rifac", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://instagram.com", "usuario22", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://twitter.com", "trec21", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://github.com", "findinguser", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://w3schools.com", "strjakHK", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://mozilla.org", "juan", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://regex101.com", "strack", "skai!s00A1-?!ssgj2", "elemento de pruebas")
-]
-
-function mostrarElementos(listaItems){
-    if(listaItems.length > 0){
-        const table = document.querySelector("#strongbox-items")
-        table.innerHTML = ""
-        for(let i = 0; i < listaItems.length; i++){
-            table.appendChild(listaItems[i].htmlTableRowElement)
-        }
-    }else{
-        noHayElementos()
-    }
-}
-
-function noHayElementos(){
-    const table = document.getElementById('strongbox-items')
-    table.innerHTML = `
-    <div>
-        <h1>No hay elementos que mostrar</h1>
-    </div>
-    `
-}
-
-mostrarElementos(listaItems)
-
-// Boton para añadir elementos en la caja fuerte
-
-function agregarElemento(elemento){
-    // con esta funcion se va a agregar el elemento directamente en la base de datos, no en el array
-    listaItems.push(elemento)
-    mostrarElementos(listaItems)
-}
+//////////////// LISTENERS ////////////////

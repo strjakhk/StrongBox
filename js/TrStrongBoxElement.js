@@ -56,25 +56,23 @@ export class TrStrongBoxElement{
     }
 
     ///////////////////////////////////////////////////////
+    //////////////// SETTERS & GETTERS ////////////////////
+    ///////////////////////////////////////////////////////
 
-    // FAV & TRASH
-    
+    // FAV & TRASh
+
     get enFavoritos(){
-        return this.#_enFavoritos
+        this.#_enFavoritos = !this.#_enFavoritos
     }
     get enPapelera(){
-        return this.#_enPapelera
+        this.#_enPapelera = !this.#_enPapelera
     }
 
     set enFavoritos(fav){
-        if(this.#_enFavoritos != fav){
-            this.#_enFavoritos = fav
-        }
+        this.#_enFavoritos = fav
     }
     set enPapelera(trash){
-        if(this.#_enPapelera != trash){
-            this.#_enPapelera = trash
-        }
+        this.#_enPapelera = trash
     }
 
     // URL
@@ -114,7 +112,7 @@ export class TrStrongBoxElement{
 
     // PASSWORD
 
-    get password(){
+    get #password(){
         return this.#_password
     }
     set password(password){
@@ -160,9 +158,13 @@ export class TrStrongBoxElement{
         
         </td>
         `
+        // this.#listeners()
     }
 
     ///////////////////////////////////////////////////////
+    ///////// PRIVATE METHODS (no setters) ///////////////
+    ///////////////////////////////////////////////////////
+
 
     // Metodo privado para obtener el nivel de la contraseña
 
