@@ -2,24 +2,30 @@ import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
 //////////////// SHOW ITEMS ////////////////
 
-const listaItems = [
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://facebook.com", "almeds", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://youtube.com", "rifac", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://instagram.com", "usuario22", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://twitter.com", "trec21", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://github.com", "findinguser", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://w3schools.com", "strjakHK", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://mozilla.org", "juan", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://regex101.com", "strack", "skai!s00A1-?!ssgj2", "elemento de pruebas")
-]
+function readStorage(){
+    const items = []
+    for(let i = 0; i < localStorage.length; i++){
+        const itemKey = localStorage.key(i)
+        const itemFromStorage = JSON.parse(localStorage.getItem(itemKey))
+        items.push(new TrStrongBoxElement(
+            itemFromStorage.url,
+            itemFromStorage.user,
+            itemFromStorage.pass,
+            itemFromStorage.descripcion,
+            itemFromStorage.fav,
+            itemFromStorage.trash
+        ))        
+    }
+    return items
+}
 
-function mostrarElementos(listaItems){
+// este método se encarga de insertar los elementos de un array en el dom
+function showItems(list){
     const table = document.getElementById('strongbox-items')
-    if(listaItems.length > 0){
+    if(list.length > 0){
         table.innerHTML = ""
-        for(let i = 0; i < listaItems.length; i++){
-            table.appendChild(listaItems[i].htmlTableRowElement)
+        for(let i = 0; i < list.length; i++){
+            table.appendChild(list[i].htmlTableRowElement)
         }
     }else{
         table.innerHTML = `
@@ -30,27 +36,21 @@ function mostrarElementos(listaItems){
     }
 }
 
-mostrarElementos(listaItems)
+showItems(readStorage())
+
 
 // LISTENERS PARA DELETE, FAV Y PASS hacerlos en la función "mostrarElementos", que es la que inserta los elementos en el DOM
+
 
 //////////////// SEARCH ITEMS ////////////////
 const searchInputNode = document.getElementById("search")
 
 searchInputNode.oninput = (e) =>{
-    console.log(e.target.value)
-    const itemsFound = listaItems.filter((elemento) =>{
+    let itemsFound = []
+    itemsFound = readStorage().filter((elemento) =>{
         return elemento.url.valor.match(e.target.value) || elemento.usuario.match(e.target.value)
     })
-    mostrarElementos(itemsFound)
-}
-
-//////////////// ADD ITEMS ////////////////
-
-function agregarElemento(elemento){
-    // con esta funcion se va a agregar el elemento directamente en la base de datos, no en el array
-    listaItems.push(elemento)
-    mostrarElementos(listaItems)
+    showItems(itemsFound)
 }
 
 //////////////// FORM VALIDATION ////////////////
@@ -89,13 +89,21 @@ function onSubmitHandler(e){
     e.preventDefault()
     const formulario = e.target
     if(formulario.checkValidity()){
-        agregarElemento(new TrStrongBoxElement(
+        const newItem = new TrStrongBoxElement(
             formulario.children[0].value,
             formulario.children[1].value,
             formulario.children[2].value,
-            formulario.children[3].value
-        ))        
-        formulario.parentElement.remove()
+            formulario.children[3].value,
+            false,
+            false
+        )
+        if(addItemToStorage(newItem)){
+            formulario.parentElement.remove()
+            showItems(readStorage())
+        }else{
+            formulario.reset()
+            alert("No se pudo agregar el item, verifique que no exista otro con la misma url")
+        }
     }
 }
 
@@ -110,5 +118,23 @@ function onInputHandler(e){
 function onInvalidHandler(e){
     console.log("invalid") // crear mensaje personalizado para que se muestre al apretar el boton de enviar
 }
+
+//////////////// ADD ITEM  ////////////////
+
+function addItemToStorage(item){
+    if(localStorage.length){
+        for(let i = 0; i < localStorage.length; i++){         
+            const itemKey = localStorage.key(i)
+            if(JSON.parse(localStorage.getItem(itemKey)).url == item.url.valor){
+                return 0
+            }
+        }
+    }    
+    localStorage.setItem(item.url.dominio, item.toJson())
+    showItems(readStorage())
+
+    return 1
+}
+
 
 //////////////// LISTENERS ////////////////

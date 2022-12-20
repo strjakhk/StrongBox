@@ -9,10 +9,10 @@ export class TrStrongBoxElement{
     #_enPapelera
     #_htmlTableRowElement
 
-    constructor(url, usuario, password, descripcion){
+    constructor(url, usuario, password, descripcion, fav, trash){
 
-        this.#_enFavoritos = false
-        this.#_enPapelera = false
+        this.#_enFavoritos = fav
+        this.#_enPapelera = trash
 
         if(this.#urlRegExp.test(url)){
             this.#_url = {
@@ -55,6 +55,19 @@ export class TrStrongBoxElement{
         `
     }
 
+    //////////////// Serialization Method (JSON) ////////////////
+
+    toJson(){
+        return JSON.stringify({
+            url : this.url.valor,
+            user : this.usuario,
+            pass : this.#password.valor,
+            descripcion : this.descripcion,
+            fav : this.enFavoritos,
+            trash : this.enPapelera
+        })
+    }
+
     ///////////////////////////////////////////////////////
     //////////////// SETTERS & GETTERS ////////////////////
     ///////////////////////////////////////////////////////
@@ -62,10 +75,10 @@ export class TrStrongBoxElement{
     // FAV & TRASh
 
     get enFavoritos(){
-        this.#_enFavoritos = !this.#_enFavoritos
+        return this.#_enFavoritos
     }
     get enPapelera(){
-        this.#_enPapelera = !this.#_enPapelera
+        return this.#_enPapelera
     }
 
     set enFavoritos(fav){
@@ -84,6 +97,7 @@ export class TrStrongBoxElement{
         if(this.#urlRegExp.test(url)){
             this.#_url = {
                 valor : url,
+                dominio : url.startsWith('https://') ? url.slice(8) : url.slice(7),
                 icon : url + 'favicon.ico'
             }
             
