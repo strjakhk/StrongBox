@@ -272,6 +272,10 @@ nav a:hover{
 
 /* td class */
 
+.url-icon > img{
+    padding-top: 4px;
+}
+
 .td-list-element{
     height: 100%;
     margin: 1px;

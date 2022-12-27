@@ -2,6 +2,71 @@ import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
 //////////////// SHOW ITEMS ////////////////
 
+showItems(filterShowableItems())
+
+function showItems(list){
+    const table = document.getElementById('strongbox-items')
+    if(list.length > 0){
+        table.innerHTML = ""
+        list.forEach(item =>{
+            table.appendChild(item.htmlTableRowElement)
+
+            // Listeners para FAV, DELETE y PASS
+            !item.inTrash ? generateListenersOnNormalItem(item) : generateListenersOnItemInTrash(item)
+        })
+    }else{
+        showNoElementsMessage(table)
+    }
+}
+
+function showNoElementsMessage(table){
+    table.innerHTML = `
+    <div>
+        <h1>No hay elementos que mostrar</h1>
+    </div>
+    `
+}
+
+function generateListenersOnNormalItem(item){
+    const buttons  = [...item.htmlTableRowElement.getElementsByTagName("button")]
+
+    // TRASH
+    buttons[0].onclick = () =>{
+        !item.inTrash ? item.inTrash = true : item.inTrash = false
+        updateStorage(item)
+    }
+    
+    // FAVORITES
+    buttons[1].onclick = () =>{
+        !item.inFav ? item.inFav = true : item.inFav = false
+        updateStorage(item)
+    }
+
+    // COPY PASS TO CLIPBOARD
+    buttons[2].onclick = () =>{
+        navigator.clipboard.writeText(item.pass.value)
+    }
+}
+
+function generateListenersOnItemInTrash(item){
+    const buttons  = [...item.htmlTableRowElement.getElementsByTagName("button")]
+    buttons[0].onclick = () =>{
+        item.inTrash = false
+        updateStorage(item)
+        showItems(filterInTrashItems())
+    }
+}
+
+function filterInTrashItems(){
+    const itemsFound = readStorage().filter(item => item.inTrash)
+    return itemsFound
+}
+
+function filterShowableItems(){
+    const itemsFound = readStorage().filter(item => !item.inTrash)
+    return itemsFound
+}
+
 function readStorage(){
     const items = []
     for(let i = 0; i < localStorage.length; i++){
@@ -11,7 +76,7 @@ function readStorage(){
             itemFromStorage.url,
             itemFromStorage.user,
             itemFromStorage.pass,
-            itemFromStorage.descripcion,
+            itemFromStorage.des,
             itemFromStorage.fav,
             itemFromStorage.trash
         ))        
@@ -19,46 +84,47 @@ function readStorage(){
     return items
 }
 
-// este método se encarga de insertar los elementos de un array en el dom
-function showItems(list){
-    const table = document.getElementById('strongbox-items')
-    if(list.length > 0){
-        table.innerHTML = ""
-        for(let i = 0; i < list.length; i++){
-            table.appendChild(list[i].htmlTableRowElement)
-        }
-    }else{
-        table.innerHTML = `
-        <div>
-            <h1>No hay elementos que mostrar</h1>
-        </div>
-        `
-    }
+//////////////// ADD ITEM TO STORAGE OR UPDATE STORAGE  ////////////////
+
+function updateStorage(item){
+    localStorage.setItem(item.url.domain, item.toJson())
+    showItems(filterShowableItems())
 }
 
-showItems(readStorage())
-
-
-// LISTENERS PARA DELETE, FAV Y PASS hacerlos en la función "mostrarElementos", que es la que inserta los elementos en el DOM
-
-
 //////////////// SEARCH ITEMS ////////////////
-const searchInputNode = document.getElementById("search")
 
-searchInputNode.oninput = (e) =>{
-    let itemsFound = []
-    itemsFound = readStorage().filter((elemento) =>{
-        return elemento.url.valor.match(e.target.value) || elemento.usuario.match(e.target.value)
+document.getElementById("search").oninput = (e) =>{
+    const itemsFound = readStorage().filter((item) =>{
+        return item.url.value.match(e.target.value) || item.user.match(e.target.value)
     })
     showItems(itemsFound)
 }
 
+//////////////// SHOW ALL ITEMS (from button) ////////////////
+
+document.getElementById("all-items").onclick = () =>{
+    showItems(filterShowableItems())
+}
+
+//////////////// SHOW FAVORITES ////////////////
+
+document.getElementById("favorites").onclick = () =>{
+    const itemsFound = filterShowableItems().filter(item => item.inFav )
+    showItems(itemsFound)
+}
+
+//////////////// SHOW TRASH ////////////////
+
+document.getElementById("trash").onclick = () =>{
+    showItems(filterInTrashItems())
+}
+
 //////////////// FORM VALIDATION ////////////////
-const addButton = document.getElementById("add-button")
-addButton.onclick = () => {
+
+document.getElementById("add-button").onclick = () => {
     const buttonSection = document.querySelector(".strongbox-content section:nth-child(2) div:nth-child(1)")
     const addItemForm = document.createElement("div")
-
+    addItemForm.classList.add("add-form")
     addItemForm.innerHTML = `
     <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
     <div id="clear"></div>
@@ -69,8 +135,7 @@ addButton.onclick = () => {
         <input type="text" name="description" id="description" placeholder=" descripcion" maxlength="20" required>
         <input type="submit" value="agregar">
     </form>
-    `
-    addItemForm.classList.add("add-form")
+    `    
     buttonSection.appendChild(addItemForm)
 
     const formulario = document.getElementById("add-button-form")
@@ -97,44 +162,15 @@ function onSubmitHandler(e){
             false,
             false
         )
-        if(addItemToStorage(newItem)){
-            formulario.parentElement.remove()
-            showItems(readStorage())
-        }else{
-            formulario.reset()
-            alert("No se pudo agregar el item, verifique que no exista otro con la misma url")
-        }
+        formulario.parentElement.remove()
+        updateStorage(newItem)
     }
 }
 
 function onInputHandler(e){
-    if(!e.target.checkValidity() && e.target.value != ""){
-        e.target.style.backgroundColor = "rgba(255, 0, 0, 0.2)"
-    }else{
-        e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
-    }
+    !e.target.checkValidity() && e.target.value != "" ? e.target.style.backgroundColor = "rgba(255, 0, 0, 0.2)" : e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
 }
 
 function onInvalidHandler(e){
     console.log("invalid") // crear mensaje personalizado para que se muestre al apretar el boton de enviar
 }
-
-//////////////// ADD ITEM  ////////////////
-
-function addItemToStorage(item){
-    if(localStorage.length){
-        for(let i = 0; i < localStorage.length; i++){         
-            const itemKey = localStorage.key(i)
-            if(JSON.parse(localStorage.getItem(itemKey)).url == item.url.valor){
-                return 0
-            }
-        }
-    }    
-    localStorage.setItem(item.url.dominio, item.toJson())
-    showItems(readStorage())
-
-    return 1
-}
-
-
-//////////////// LISTENERS ////////////////
