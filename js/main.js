@@ -2,24 +2,18 @@ import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
 //////////////// SHOW ITEMS ////////////////
 
-const listaItems = [
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("http://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas"),
-    new TrStrongBoxElement("https://google.com", "strjak", "skai!s00A1-?!ssgj2", "elemento de pruebas")
-]
+showItems(filterShowableItems())
 
-const mostrarElementos = (listaItems) =>{
-    if(listaItems.length > 0){
-        const table = document.getElementById('strongbox-items')
-        for(let i = 0; i < listaItems.length; i++){
-            table.appendChild(listaItems[i].htmlTableRowElement)
-        }
+function showItems(list){
+    const table = document.getElementById('strongbox-items')
+    if(list.length > 0){
+        table.innerHTML = ""
+        list.forEach(item =>{
+            table.appendChild(item.htmlTableRowElement)
+
+            // Listeners para FAV, DELETE y PASS
+            !item.inTrash ? generateListenersOnNormalItem(item) : generateListenersOnItemInTrash(item)
+        })
     }else{
         showNoElementsMessage(table)
     }
@@ -121,36 +115,62 @@ document.getElementById("favorites").onclick = () =>{
 
 //////////////// SHOW TRASH ////////////////
 
-const elemento = {
-    // objeto con los datos que el usuario ingresa en el formulario para añadir un elemento
+document.getElementById("trash").onclick = () =>{
+    showItems(filterInTrashItems())
 }
 
-const agregarElemento = (elemento) =>{
+//////////////// FORM VALIDATION ////////////////
+
+document.getElementById("add-button").onclick = () => {
+    const buttonSection = document.querySelector(".strongbox-content section:nth-child(2) div:nth-child(1)")
+    const addItemForm = document.createElement("div")
+    addItemForm.classList.add("add-form")
+    addItemForm.innerHTML = `
+    <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
+    <div id="clear"></div>
+    <form id="add-button-form">
+        <input type="url" name="url" id="url" placeholder=" url" required>
+        <input type="text" name="user" id="user" placeholder=" usuario" pattern=".{3,}" required>
+        <input type="password" name="pass" id="pass" placeholder=" contraseña" required>
+        <input type="text" name="description" id="description" placeholder=" descripcion" maxlength="20" required>
+        <input type="submit" value="agregar">
+    </form>
+    `    
+    buttonSection.appendChild(addItemForm)
+
+    const formulario = document.getElementById("add-button-form")
+    const closeButton = document.getElementById("close")
+    closeButton.addEventListener("click", closeHandler)
+    formulario.addEventListener("input", onInputHandler)
+    formulario.addEventListener("invalid", onInvalidHandler, true)
+    formulario.addEventListener("submit", onSubmitHandler)
+}
 
 function closeHandler(){
     document.querySelector(".add-form").remove()
 }
 
-    if(elemento){
-        console.log("Elemento añadido a la base de datos")
-    }else{
-        console.log("No se pudo agregar el elemento")
+function onSubmitHandler(e){
+    e.preventDefault()
+    const formulario = e.target
+    if(formulario.checkValidity()){
+        const newItem = new TrStrongBoxElement(
+            formulario.children[0].value,
+            formulario.children[1].value,
+            formulario.children[2].value,
+            formulario.children[3].value,
+            false,
+            false
+        )
+        formulario.parentElement.remove()
+        updateStorage(newItem)
     }
-
-    const newItem = new TrStrongBoxElement(elemento.url, elemento.usuario, elemento.pass, elemento.descripcion)    
-    listaItems.push(newItem)
-
-    mostrarElementos(listaItems)
 }
 
-agregarElemento()
+function onInputHandler(e){
+    !e.target.checkValidity() && e.target.value != "" ? e.target.style.backgroundColor = "rgba(255, 0, 0, 0.2)" : e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
+}
 
-// Buscar un elemento por url o dominio
-
-const buscarElemento = () =>{
-    const buscar = prompt("Ingrese elemento a buscar")
-    const resultado = listaItems.filter((elemento) =>{
-        return elemento.url.valor.match(buscar) || elemento.usuario.match(buscar)
-    })
-    return resultado
+function onInvalidHandler(e){
+    console.log("invalid") // crear mensaje personalizado para que se muestre al apretar el boton de enviar
 }
