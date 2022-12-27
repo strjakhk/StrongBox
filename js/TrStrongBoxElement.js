@@ -1,55 +1,35 @@
 export class TrStrongBoxElement{
-
-    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g // uso un objeto de tipo RegExp porque con string.Match() no puedo usar "{}$" para matchear el final de una linea
-    #_url
-    #_usuario
-    #_password
-    #_descripcion
-    #_htmlTableRowElement
-    #_enFavoritos
-    #_enPapelera
-
-    constructor(url, usuario, password, descripcion){
-
-        this.#_enFavoritos = false
-        this.#_enPapelera = false
-
-        if(this.#urlRegExp.test(url)){
-            this.#_url = {
-                valor : url,
-                dominio : url.startsWith('https://') ? url.slice(8) : url.slice(7),
-                icon : url + '/favicon.ico'
-            }
-            
-        }else{
-            this.#_url = {
-                valor : undefined,
-                icon : undefined
-            }
-        }
-        
-        this.#_usuario = usuario
-
-        this.#_password = {
-            valor : password,
-            level : this.#passLevel(password)
-        }
-        
-        this.#_descripcion = descripcion
-
-        this.#_htmlTableRowElement = document.createElement("tr")
-        this.#_htmlTableRowElement.innerHTML = `\
-        <td class="td-list-element"><i><img src="${this.url.icon}" alt="url icon"></i></td>
-        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.dominio}</a><span>${this.usuario}</span></td>
-        <td class="td-list-element"><button><i></i>pass</button></td>
-        <td class="td-list-element">${this.descripcion}</td>
-        `
+    constructor(url, user, pass, des, fav, trash){
+        this.url = url
+        this.user = user
+        this.pass = pass
+        this.description = des
+        this.inFav = fav
+        this.inTrash = trash
+        this.#htmlTableRowElement = { url : this.url, user : this.user, pass : this.pass, des : this.description, fav : this.inFav, trash : this.inTrash}
     }
 
-    // FAV & TRASH
-    
-    get enFavoritos(){
-        return this.#_enFavoritos
+    #passlvl(pass){
+        let passlvl = 0
+        pass.match(/[\W]/) && passlvl++
+        pass.match(/[\d]/) && passlvl++
+        pass.match(/[A-Z]/) && passlvl++
+        pass.length > 6 && passlvl++
+        pass.length > 8 && passlvl++
+        pass.length > 12 && passlvl++
+
+        return passlvl
+    }
+
+    toJson(){
+        return JSON.stringify({
+            url : this.url.value,
+            user : this.user,
+            pass : this.pass.value,
+            des : this.description,
+            fav : this.inFav,
+            trash : this.inTrash
+        })
     }
 
     // Getters & Setters
@@ -71,64 +51,46 @@ export class TrStrongBoxElement{
     set user(user){
         this._user = user
     }
-    set url(url){
-        if(this.#urlRegExp.test(url)){
-            this.#_url = {
-                valor : url,
-                icon : url + 'favicon.ico'
-            }
-            
-        }else{
-            this.#_url = {
-                valor : undefined,
-                icon : undefined
-            }
-        }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+
+    get pass(){
+        return this._pass
+    }
+    set pass(pass){
+        this._pass = { value : pass, level : this.#passlvl(pass) }
     }
 
     get description(){
         return this._description
     }
-    set usuario(usuario){
-        this.#_usuario = usuario
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+    set description(des){
+        this._description = des
     }
 
     get inFav(){
         return this._inFav
     }
-    set password(password){
-        this.#_password = {
-            valor : password,
-            level : this.#passLevel(password)
-        }
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+    set inFav(inFav){
+        this._inFav = inFav
     }
 
     get inTrash(){
         return this._inTrash
     }
-    set descripcion(descripcion){
-        this.#_descripcion = descripcion
-        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
+    set inTrash(inTrash){
+        this._inTrash = inTrash
     }
-
-    // HTMLTableRowElement
-    // el metodo set genera el elemento html con los datos de la instancia del objeto, pero solo puede llamarse desde los otros métodos setters.
-    // de esta forma los datos del elemento html se actualizan cada vez que el usuario llama a un método set (por ejemplo, cuando quieran actualizar un dato)
 
     get htmlTableRowElement(){
-        return this.#_htmlTableRowElement
+        return this._htmlTableRowElement
     }
-    set #HtmlTableRowElement(htmlTableRowElement){
-        this.#_htmlTableRowElement.innerHTML = `\
-        <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a></td>
-        <td class="td-list-element">${htmlTableRowElement.usuario}</td>
-        <td class="td-list-element">${htmlTableRowElement.password.valor}</td>
-        <td class="td-list-element">${htmlTableRowElement.descripcion}</td>
-        `
-    }
+    set #htmlTableRowElement(data){
+        this._htmlTableRowElement = document.createElement("tr")
+
+        if(!data.trash){
+            this._htmlTableRowElement.innerHTML = `\
+            <td class="td-list-element"><i class="url-icon"><img src="${data.url.icon}" alt="url icon" width="24" height="24"></i></td>
+            <td class="td-list-element"><a href="${data.url.value}" target="_blank">${data.url.domain}</a>${data.user}</td>
+            <td class="td-list-element">${data.des}</td>
 
             <td class="td-list-element">
 
