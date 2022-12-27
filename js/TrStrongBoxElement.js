@@ -1,10 +1,11 @@
 export class TrStrongBoxElement{
 
-    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g
+    #urlRegExp = /^(http|https)(\S+)(\.[a-zA-Z]{2,4}$|\.[a-zA-Z]\/{2,4}$)/g // uso un objeto de tipo RegExp porque con string.Match() no puedo usar "{}$" para matchear el final de una linea
     #_url
     #_usuario
     #_password
     #_descripcion
+    #_htmlTableRowElement
     #_enFavoritos
     #_enPapelera
 
@@ -36,35 +37,39 @@ export class TrStrongBoxElement{
         
         this.#_descripcion = descripcion
 
-        // En el constructor de la clase, se va a generar también el elemento html (nodo) con todos los datos del objeto instanciado
+        this.#_htmlTableRowElement = document.createElement("tr")
+        this.#_htmlTableRowElement.innerHTML = `\
+        <td class="td-list-element"><i><img src="${this.url.icon}" alt="url icon"></i></td>
+        <td class="td-list-element"><a href="${this.url.valor}" target="_blank">${this.url.dominio}</a><span>${this.usuario}</span></td>
+        <td class="td-list-element"><button><i></i>pass</button></td>
+        <td class="td-list-element">${this.descripcion}</td>
+        `
     }
-
-    ///////////////////////////////////////////////////////
 
     // FAV & TRASH
     
     get enFavoritos(){
         return this.#_enFavoritos
     }
-    get enPapelera(){
-        return this.#_enPapelera
-    }
 
-    set enFavoritos(fav){
-        if(this.#_enFavoritos != fav){
-            this.#_enFavoritos = fav
-        }
-    }
-    set enPapelera(trash){
-        if(this.#_enPapelera != trash){
-            this.#_enPapelera = trash
-        }
-    }
-
-    // URL
+    // Getters & Setters
 
     get url(){
-        return this.#_url
+        return this._url
+    }
+    set url(url){
+        this._url = {
+            value : url,
+            domain : url.startsWith('https://') ? url.slice(8) : url.slice(7),
+            icon : url + '/favicon.ico' // hacer con fetch
+        }
+    }
+
+    get user(){
+        return this._user
+    }
+    set user(user){
+        this._user = user
     }
     set url(url){
         if(this.#urlRegExp.test(url)){
@@ -79,75 +84,70 @@ export class TrStrongBoxElement{
                 icon : undefined
             }
         }
+        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
-    // USUARIO
-
-    get usuario(){
-        return this.#_usuario
+    get description(){
+        return this._description
     }
     set usuario(usuario){
-        if(!usuario.match(/\s/) || usuario.length > 3){
-            this.#_usuario = usuario
-        }else{
-            this.#_usuario = undefined
-        }
-        
+        this.#_usuario = usuario
+        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
-    // PASSWORD
-
-    get password(){
-        return this.#_password
+    get inFav(){
+        return this._inFav
     }
     set password(password){
         this.#_password = {
             valor : password,
             level : this.#passLevel(password)
         }
+        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
-    // DESCRIPCION
-
-    get descripcion(){
-        return this.#_descripcion
+    get inTrash(){
+        return this._inTrash
     }
     set descripcion(descripcion){
-        if(descripcion.length < 20){
-            this.#_descripcion = descripcion
-        }else{
-            this.#_descripcion = undefined
-        }        
+        this.#_descripcion = descripcion
+        this.#HtmlTableRowElement({url : this.url, usuario : this.usuario, password : this.password, descripcion : this.descripcion})
     }
 
-    ///////////////////////////////////////////////////////
+    // HTMLTableRowElement
+    // el metodo set genera el elemento html con los datos de la instancia del objeto, pero solo puede llamarse desde los otros métodos setters.
+    // de esta forma los datos del elemento html se actualizan cada vez que el usuario llama a un método set (por ejemplo, cuando quieran actualizar un dato)
 
-    // Metodo privado para obtener el nivel de la contraseña
+    get htmlTableRowElement(){
+        return this.#_htmlTableRowElement
+    }
+    set #HtmlTableRowElement(htmlTableRowElement){
+        this.#_htmlTableRowElement.innerHTML = `\
+        <td class="td-list-element"><i><img src="${htmlTableRowElement.url.icon}" alt="url icon"></i><a href="${htmlTableRowElement.url.valor}" target="_blank">${htmlTableRowElement.url.valor}</a></td>
+        <td class="td-list-element">${htmlTableRowElement.usuario}</td>
+        <td class="td-list-element">${htmlTableRowElement.password.valor}</td>
+        <td class="td-list-element">${htmlTableRowElement.descripcion}</td>
+        `
+    }
 
-    // passlvl = -1000  -> Error, la contraseña no puede contener espacios
-    // passlvl = -2000  -> Error, cadena vacía o tipo de dato incorrecto
-    // passlvl = -1 a 2 -> Contraseña debil
-    // passlvl =  2 a 4 -> Contraseña normal
-    // passlvl =  4 a 6 -> Contraseña fuerte
+            <td class="td-list-element">
 
-    #passLevel(password){
-        if(typeof password == "string" && password.length > 0){
-            let passlvl = 0
+            <button type="button" id="delete"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(155, 155, 155, 1);transform: ;msFilter:;"><path d="M5 20a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8h2V6h-4V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3v2h2zM9 4h6v2H9zM8 8h9v12H7V8z"></path><path d="M9 10h2v8H9zm4 0h2v8h-2z"></path></svg></i></button>
 
-            if(password.match(/[\s]/)) return (-1000)
-            if(password.match(/[\W]/)) passlvl++
-            if(password.match(/[\d]/)) passlvl++
-            if(password.match(/[A-Z]/)) passlvl++
+            <button type="button" id="fav"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: ${data.fav ? 'rgba(155, 155, 0, 1)' : 'rgba(155, 155, 155, 1)'};transform: ;msFilter:;"><path d="M21.947 9.179a1.001 1.001 0 0 0-.868-.676l-5.701-.453-2.467-5.461a.998.998 0 0 0-1.822-.001L8.622 8.05l-5.701.453a1 1 0 0 0-.619 1.713l4.213 4.107-1.49 6.452a1 1 0 0 0 1.53 1.057L12 18.202l5.445 3.63a1.001 1.001 0 0 0 1.517-1.106l-1.829-6.4 4.536-4.082c.297-.268.406-.686.278-1.065z"></path></svg></i></button>
 
-            switch (true){
-                case (password.length < 6) : passlvl -= 1; break
-                case (password.length >= 6 && password.length <= 8) : passlvl += 1; break
-                case (password.length >= 9 && password.length <= 12) : passlvl += 2; break
-                case (password.length > 12) : passlvl += 3; break
-            }
-            return passlvl
+            <button type="button" id="pass"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(155, 155, 155, 1);transform: ;msFilter:;"><path d="M14 8H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2V10c0-1.103-.897-2-2-2z"></path><path d="M20 2H10a2 2 0 0 0-2 2v2h8a2 2 0 0 1 2 2v8h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path></svg></i></button>
+        
+            </td>
+            `
         }else{
-            return (-2000)
+            this._htmlTableRowElement.innerHTML = `\
+            <tr>
+                <td class="td-list-element"><span><img src="${data.url.icon}" alt="${data.url.domain}"width="24px" hieght="24px"></span></td>
+                <td class="td-list-element"><span>${data.url.domain}</span></td>
+                <td class="td-list-element"><button type="button" id="restore"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(155, 155, 155, 1);transform: ;msFilter:;"><path d="M21 11H6.414l5.293-5.293-1.414-1.414L2.586 12l7.707 7.707 1.414-1.414L6.414 13H21z"></path></svg></i></button></td>
+            </tr>
+            `
         }
     }
 }

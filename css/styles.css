@@ -163,6 +163,7 @@ nav a:hover{
 }
 
 .strongbox-content section:nth-child(2) div:nth-child(1){
+    position: relative;
     display: flex;
     justify-content: space-between;
 
@@ -193,6 +194,65 @@ nav a:hover{
     color: #243B55;
 }
 
+/* Add FORM */
+
+.add-form{
+    z-index: 1000;
+    position: absolute;
+    right: 0px;
+
+    width: 400px;
+    height: auto;
+    padding: 5px;
+    box-sizing: border-box;
+
+    background-color: #232526; 
+    border: #243B55 2px solid;
+    border-radius: 5px;
+}
+
+.add-form > button{
+    cursor: pointer;
+    float: right;
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.add-form #clear{
+    clear: both;
+}
+
+.add-form > form{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.add-form input{
+    width: 100%;
+    height: 40px;
+    margin: 5px 0px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px #555 solid;
+    border-radius: 3px;
+    color: #aaa;
+}
+
+.add-form input:focus{
+    box-shadow: #243B55 0px 0px 3px 1px;
+}
+
+.add-form input[type="submit"]{
+    background-color: #243B55;
+    cursor: pointer;
+    color: #ccc;
+}
+.add-form input[type="submit"]:hover{
+    color: #243B55;
+    background-color: #ccc;
+}
+
 /* Lista TABLE */
 
 .strongbox-items{
@@ -207,12 +267,16 @@ nav a:hover{
     height: 50px;
     margin: 0px 0px 20px 0px;
     border-radius: 5px;
+    border-bottom: #777 1px solid;  
 }
 
 /* td class */
 
+.url-icon > img{
+    padding-top: 4px;
+}
+
 .td-list-element{
-    background-color: rgba(255, 255, 255, 0.1);
     height: 100%;
     margin: 1px;
     color: #ccc;
@@ -227,12 +291,19 @@ nav a:hover{
     flex-direction: column;
 }
 .td-list-element:nth-child(3){
-    flex: 1;
-    order: 4;
+    flex: 1.5;
 }
 .td-list-element:nth-child(4){
-    flex: 1.5;
-    order: 3;
+    flex: 1;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.td-list-element:nth-child(4) button{
+    background-color: rgba(255, 255, 255, 0);
+    cursor: pointer;
 }
 
 .td-list-element:nth-child(2) a{
