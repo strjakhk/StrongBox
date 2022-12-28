@@ -119,7 +119,7 @@ document.getElementById("trash").onclick = () =>{
     showItems(filterInTrashItems())
 }
 
-// Validación de formulario
+// Validación de formulario para añadir elementos
 
 document.getElementById("add-button").onclick = () => {
     const newItemSection = document.getElementById("new-item-section")
@@ -143,44 +143,48 @@ document.getElementById("add-button").onclick = () => {
         document.querySelector(".add-form").remove()
     }
 
-    document.getElementById("add-button-form").addEventListener("submit", function(e){
+    document.getElementById("add-button-form").onsubmit = (e) =>{
         e.preventDefault()
         const formulario = e.target
         const inputs = document.querySelectorAll("#add-button-form input")
 
-        if(!/\.\w{2,4}$/g.test(inputs[0].value)){
-            formulario.reset()
-            alert("url no valida")
-            return
+        if(formulario.checkValidity()){ // uso checkValidity para la primer capa de validación con html5 (atributos required)
+            if(!/\.\w{2,4}$/g.test(inputs[0].value)){
+                formulario.reset()
+                alert("url no valida")
+                return
+            }
+            
+            if(!/\S{3,}/g.test(inputs[1].value)){
+                formulario.reset()
+                alert("usuario no valido")
+                return
+            }
+    
+            if(/\s{1,}/g.test(inputs[2].value)){
+                formulario.reset()
+                alert("contraseña no valida")
+                return
+            }
+    
+            if(inputs[3].value.length > 12){
+                formulario.reset()
+                alert("descripción no valida")
+                return
+            }
+    
+            const newItem = new TrStrongBoxElement(
+                inputs[0].value,
+                inputs[1].value,
+                inputs[2].value,
+                inputs[3].value,
+                false,
+                false
+            )
+            formulario.parentElement.remove()
+            updateStorage(newItem)
+        }else{
+            alert("datos no validos")
         }
-        
-        if(!/\S{3,}/g.test(inputs[1].value)){
-            formulario.reset()
-            alert("usuario no valido")
-            return
-        }
-
-        if(/\s{1,}/g.test(inputs[2].value)){
-            formulario.reset()
-            alert("contraseña no valida")
-            return
-        }
-
-        if(inputs[3].value.length > 12){
-            formulario.reset()
-            alert("descripción no valida")
-            return
-        }
-
-        const newItem = new TrStrongBoxElement(
-            inputs[0].value,
-            inputs[1].value,
-            inputs[2].value,
-            inputs[3].value,
-            false,
-            false
-        )
-        formulario.parentElement.remove()
-        updateStorage(newItem)
-    })
+    }
 }
