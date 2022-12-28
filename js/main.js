@@ -57,15 +57,21 @@ function generateListenersOnItemInTrash(item){
     }
 }
 
+// leer items de storage, filtrando los que están en papelera
+
 function filterInTrashItems(){
     const itemsFound = readStorage().filter(item => item.inTrash)
     return itemsFound
 }
 
+// leer items de storage, filtrando los que no están en papelera
+
 function filterShowableItems(){
     const itemsFound = readStorage().filter(item => !item.inTrash)
     return itemsFound
 }
+
+// función para leer todos los items de la storage, sin filtrar alguno
 
 function readStorage(){
     const items = []
@@ -128,13 +134,15 @@ document.getElementById("add-button").onclick = () => {
 
     addItemForm.classList.add("add-form")
     addItemForm.innerHTML = `
-    <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
-    <div id="clear"></div>
+    <div class="form-message">
+        <span>Agregar nuevo elemento</span>
+        <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
+    </div>
     <form id="add-button-form">
-        <input type="url" name="url" id="url" placeholder=" url">
-        <input type="text" name="user" id="user" placeholder=" usuario">
-        <input type="password" name="pass" id="pass" placeholder=" contraseña">
-        <input type="text" name="description" id="description" placeholder=" descripcion">
+        <input type="url" name="url" id="url" placeholder=" url" required>
+        <input type="text" name="user" id="user" placeholder=" usuario" required>
+        <input type="password" name="pass" id="pass" placeholder=" contraseña" required>
+        <input type="text" name="description" id="description" placeholder=" descripcion" required>
         <input type="submit" value="agregar">
     </form>
     `
@@ -150,26 +158,22 @@ document.getElementById("add-button").onclick = () => {
 
         if(formulario.checkValidity()){ // uso checkValidity para la primer capa de validación con html5 (atributos required)
             if(!/\.\w{2,4}$/g.test(inputs[0].value)){
-                formulario.reset()
-                alert("url no valida")
+                inputErrorMessage(inputs[0])
                 return
             }
             
-            if(!/\S{3,}/g.test(inputs[1].value)){
-                formulario.reset()
-                alert("usuario no valido")
+            if(!/\S{3,}/g.test(inputs[1].value)){                
+                inputErrorMessage(inputs[1])
                 return
             }
     
-            if(/\s{1,}/g.test(inputs[2].value)){
-                formulario.reset()
-                alert("contraseña no valida")
+            if(/\s{1,}/g.test(inputs[2].value)){                
+                inputErrorMessage(inputs[2])
                 return
             }
     
-            if(inputs[3].value.length > 12){
-                formulario.reset()
-                alert("descripción no valida")
+            if(inputs[3].value.length > 12){                
+                inputErrorMessage(inputs[3])
                 return
             }
     
@@ -183,8 +187,33 @@ document.getElementById("add-button").onclick = () => {
             )
             formulario.parentElement.remove()
             updateStorage(newItem)
-        }else{
-            alert("datos no validos")
+        }
+    }
+
+    function inputErrorMessage(input){
+        const errorDialog = document.querySelector(".form-message > span")
+        errorDialog.classList.add("error-dialog")
+    
+        switch(input.name){
+            case "url":
+                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                break
+
+            case "user":
+                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                break
+
+            case "pass":
+                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                break
+
+            case "description":
+                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                break
+
+            default:
+                errorDialog.classList.remove("error-dialog")
+                errorDialog.textContent = `Agregar nuevo elemento`
         }
     }
 }

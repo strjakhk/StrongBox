@@ -162,7 +162,7 @@ nav a:hover{
     height: auto; /* a implementar */
 }
 
-.strongbox-content section:nth-child(2) div:nth-child(1){
+.strongbox-content section:nth-child(2) > div:nth-child(1){
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -194,7 +194,7 @@ nav a:hover{
     color: #243B55;
 }
 
-/* Add FORM */
+/* Formulario para añadir elementos */
 
 .add-form{
     z-index: 1000;
@@ -211,14 +211,24 @@ nav a:hover{
     border-radius: 5px;
 }
 
-.add-form > button{
-    cursor: pointer;
-    float: right;
-    background-color: rgba(255, 255, 255, 0);
+.error-dialog{
+    background-color: rgba(255, 0, 0, 0.1);
 }
 
-.add-form #clear{
-    clear: both;
+.form-message{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.form-message > span{
+    color: #aaa;
+    padding-top: 5px;
+}
+
+.form-message > button{
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .add-form > form{
@@ -241,10 +251,6 @@ nav a:hover{
 
 .add-form input:focus{
     box-shadow: #243B55 0px 0px 3px 1px;
-}
-
-.add-form input:invalid{
-    background-color: rgba(255, 0, 0, 0.2);
 }
 
 .add-form input[type="submit"]{
