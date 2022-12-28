@@ -1,6 +1,6 @@
 import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 
-//////////////// SHOW ITEMS ////////////////
+// Mostrar items
 
 showItems(filterShowableItems())
 
@@ -30,19 +30,19 @@ function showNoElementsMessage(table){
 function generateListenersOnNormalItem(item){
     const buttons  = [...item.htmlTableRowElement.getElementsByTagName("button")]
 
-    // TRASH
+    // Papelera
     buttons[0].onclick = () =>{
         !item.inTrash ? item.inTrash = true : item.inTrash = false
         updateStorage(item)
     }
     
-    // FAVORITES
+    // Favoritos
     buttons[1].onclick = () =>{
         !item.inFav ? item.inFav = true : item.inFav = false
         updateStorage(item)
     }
 
-    // COPY PASS TO CLIPBOARD
+    // Copiar contraseña al clipboard
     buttons[2].onclick = () =>{
         navigator.clipboard.writeText(item.pass.value)
     }
@@ -84,14 +84,14 @@ function readStorage(){
     return items
 }
 
-//////////////// ADD ITEM TO STORAGE OR UPDATE STORAGE  ////////////////
+// Añadir item al storage o actualizar storage  
 
 function updateStorage(item){
     localStorage.setItem(item.url.domain, item.toJson())
     showItems(filterShowableItems())
 }
 
-//////////////// SEARCH ITEMS ////////////////
+// Buscar items 
 
 document.getElementById("search").oninput = (e) =>{
     const itemsFound = readStorage().filter((item) =>{
@@ -100,77 +100,87 @@ document.getElementById("search").oninput = (e) =>{
     showItems(itemsFound)
 }
 
-//////////////// SHOW ALL ITEMS (from button) ////////////////
+// Mostrar todos los items (desde el botón)
 
 document.getElementById("all-items").onclick = () =>{
     showItems(filterShowableItems())
 }
 
-//////////////// SHOW FAVORITES ////////////////
+// Mostrar favoritos
 
 document.getElementById("favorites").onclick = () =>{
     const itemsFound = filterShowableItems().filter(item => item.inFav )
     showItems(itemsFound)
 }
 
-//////////////// SHOW TRASH ////////////////
+// Mostrar papelera 
 
 document.getElementById("trash").onclick = () =>{
     showItems(filterInTrashItems())
 }
 
-//////////////// FORM VALIDATION ////////////////
+// Validación de formulario
 
 document.getElementById("add-button").onclick = () => {
-    const buttonSection = document.querySelector(".strongbox-content section:nth-child(2) div:nth-child(1)")
+    const newItemSection = document.getElementById("new-item-section")
     const addItemForm = document.createElement("div")
+    newItemSection.appendChild(addItemForm)
+
     addItemForm.classList.add("add-form")
     addItemForm.innerHTML = `
     <button type="button" id="close"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: #ccc ;transform: ;msFilter:;"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></i></button>
     <div id="clear"></div>
     <form id="add-button-form">
-        <input type="url" name="url" id="url" placeholder=" url" required>
-        <input type="text" name="user" id="user" placeholder=" usuario" pattern=".{3,}" required>
-        <input type="password" name="pass" id="pass" placeholder=" contraseña" required>
-        <input type="text" name="description" id="description" placeholder=" descripcion" maxlength="20" required>
+        <input type="url" name="url" id="url" placeholder=" url">
+        <input type="text" name="user" id="user" placeholder=" usuario">
+        <input type="password" name="pass" id="pass" placeholder=" contraseña">
+        <input type="text" name="description" id="description" placeholder=" descripcion">
         <input type="submit" value="agregar">
     </form>
-    `    
-    buttonSection.appendChild(addItemForm)
+    `
 
-    const formulario = document.getElementById("add-button-form")
-    const closeButton = document.getElementById("close")
-    closeButton.addEventListener("click", closeHandler)
-    formulario.addEventListener("input", onInputHandler)
-    formulario.addEventListener("invalid", onInvalidHandler, true)
-    formulario.addEventListener("submit", onSubmitHandler)
-}
+    document.getElementById("close").onclick = () =>{
+        document.querySelector(".add-form").remove()
+    }
 
-function closeHandler(){
-    document.querySelector(".add-form").remove()
-}
+    document.getElementById("add-button-form").addEventListener("submit", function(e){
+        e.preventDefault()
+        const formulario = e.target
+        const inputs = document.querySelectorAll("#add-button-form input")
 
-function onSubmitHandler(e){
-    e.preventDefault()
-    const formulario = e.target
-    if(formulario.checkValidity()){
+        if(!/\.\w{2,4}$/g.test(inputs[0].value)){
+            formulario.reset()
+            alert("url no valida")
+            return
+        }
+        
+        if(!/\S{3,}/g.test(inputs[1].value)){
+            formulario.reset()
+            alert("usuario no valido")
+            return
+        }
+
+        if(/\s{1,}/g.test(inputs[2].value)){
+            formulario.reset()
+            alert("contraseña no valida")
+            return
+        }
+
+        if(inputs[3].value.length > 12){
+            formulario.reset()
+            alert("descripción no valida")
+            return
+        }
+
         const newItem = new TrStrongBoxElement(
-            formulario.children[0].value,
-            formulario.children[1].value,
-            formulario.children[2].value,
-            formulario.children[3].value,
+            inputs[0].value,
+            inputs[1].value,
+            inputs[2].value,
+            inputs[3].value,
             false,
             false
         )
         formulario.parentElement.remove()
         updateStorage(newItem)
-    }
-}
-
-function onInputHandler(e){
-    !e.target.checkValidity() && e.target.value != "" ? e.target.style.backgroundColor = "rgba(255, 0, 0, 0.2)" : e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)"
-}
-
-function onInvalidHandler(e){
-    console.log("invalid") // crear mensaje personalizado para que se muestre al apretar el boton de enviar
+    })
 }

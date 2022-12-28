@@ -243,6 +243,10 @@ nav a:hover{
     box-shadow: #243B55 0px 0px 3px 1px;
 }
 
+.add-form input:invalid{
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
 .add-form input[type="submit"]{
     background-color: #243B55;
     cursor: pointer;
