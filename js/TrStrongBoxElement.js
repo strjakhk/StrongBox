@@ -41,7 +41,7 @@ export class TrStrongBoxElement{
         this._url = {
             value : url,
             domain : url.startsWith('https://') ? url.slice(8) : url.slice(7),
-            icon : url + '/favicon.ico' // hacer con fetch
+            icon : url + '/favicon.ico'
         }
     }
 
