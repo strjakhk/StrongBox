@@ -3,10 +3,12 @@ import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
 // Mostrar items
 
 showItems(filterShowableItems())
+sessionStorage.setItem("whereIam", "all")
 
 function showItems(list){
     const table = document.getElementById('strongbox-items')
     if(list.length > 0){
+        document.getElementById("item-count").innerText = list.length
         table.innerHTML = ""
         list.forEach(item =>{
             table.appendChild(item.htmlTableRowElement)
@@ -20,6 +22,7 @@ function showItems(list){
 }
 
 function showNoElementsMessage(table){
+    document.getElementById("item-count").innerText = 0
     table.innerHTML = `
     <div>
         <h1>No hay elementos que mostrar</h1>
@@ -50,11 +53,40 @@ function generateListenersOnNormalItem(item){
 
 function generateListenersOnItemInTrash(item){
     const buttons  = [...item.htmlTableRowElement.getElementsByTagName("button")]
+
     buttons[0].onclick = () =>{
         item.inTrash = false
         updateStorage(item)
         showItems(filterInTrashItems())
     }
+
+    buttons[1].onclick = () =>{
+        const deleteDialog = document.createElement("div")
+        deleteDialog.classList.add("delete-dialog")
+        document.getElementById("restore-and-delete-content").appendChild(deleteDialog)
+        deleteDialog.innerHTML = `
+            <span>borrar?</span>
+            <div>
+                <button type="button" id="yes">si</button>
+                <button type="button" id="no">no</button>
+            </div>       
+        `
+        document.getElementById("yes").onclick = () =>{
+            localStorage.removeItem(item.url.domain)
+            showItems(filterInTrashItems())
+        }
+
+        document.getElementById("no").onclick = () =>{
+            deleteDialog.remove()
+        }
+    }
+}
+
+// leer items de storage, filtrando los favoritos
+
+function filterFavoriteItems(){
+    const itemsFound = filterShowableItems().filter(item => item.inFav )
+    return itemsFound
 }
 
 // leer items de storage, filtrando los que están en papelera
@@ -100,28 +132,58 @@ function updateStorage(item){
 // Buscar items 
 
 document.getElementById("search").oninput = (e) =>{
-    const itemsFound = readStorage().filter((item) =>{
-        return item.url.value.match(e.target.value) || item.user.match(e.target.value)
-    })
+    let itemsFound = []
+    const whereIam = sessionStorage.getItem("whereIam")
+    if(whereIam == "fav"){
+        itemsFound = filterFavoriteItems().filter((item) =>{
+            return item.url.value.match(e.target.value) || item.user.match(e.target.value)
+        })
+    }
+
+    if(whereIam == "trash"){
+        itemsFound = filterInTrashItems().filter((item) =>{
+            return item.url.value.match(e.target.value) || item.user.match(e.target.value)
+        })
+    }
+
+    if(whereIam == "all"){
+        itemsFound = filterShowableItems().filter((item) =>{
+            return item.url.value.match(e.target.value) || item.user.match(e.target.value)
+        })
+    }
+    
     showItems(itemsFound)
+}
+
+// Mostrar todos los items
+
+document.getElementById("show-all").onclick = () =>{
+    sessionStorage.setItem("whereIam", "all")
+    document.getElementById("items-section").innerText = "Elementos de caja fuerte"
+    showItems(filterShowableItems())
 }
 
 // Mostrar todos los items (desde el botón)
 
 document.getElementById("all-items").onclick = () =>{
+    sessionStorage.setItem("whereIam", "all")
+    document.getElementById("items-section").innerText = "Elementos de caja fuerte"
     showItems(filterShowableItems())
 }
 
 // Mostrar favoritos
 
 document.getElementById("favorites").onclick = () =>{
-    const itemsFound = filterShowableItems().filter(item => item.inFav )
-    showItems(itemsFound)
+    sessionStorage.setItem("whereIam", "fav")
+    document.getElementById("items-section").innerText = "Favoritos"
+    showItems(filterFavoriteItems())
 }
 
 // Mostrar papelera 
 
 document.getElementById("trash").onclick = () =>{
+    sessionStorage.setItem("whereIam", "trash")
+    document.getElementById("items-section").innerText = "Papelera"
     showItems(filterInTrashItems())
 }
 

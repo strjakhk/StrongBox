@@ -271,13 +271,14 @@ nav a:hover{
 }
 
 .strongbox-items tr{
+    background-color: rgba(36, 59, 85, 0.1);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 50px;
     margin: 0px 0px 20px 0px;
+    padding: 15px;
     border-radius: 5px;
-    border-bottom: #777 1px solid;  
+    border: #222 2px solid;
 }
 
 /* td class */
@@ -301,6 +302,7 @@ nav a:hover{
     flex-direction: column;
 }
 .td-list-element:nth-child(3){
+    position: relative;
     flex: 1.5;
 }
 .td-list-element:nth-child(4){
@@ -322,6 +324,60 @@ nav a:hover{
 
 .td-list-element:nth-child(1) i{
     transform: scale(0.8);
+}
+
+/* Estilos para lista en papelera */
+
+.trash-tr{
+    background-color: rgba(150, 0, 0, 0.2) !important;
+}
+
+.delete-dialog{
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 100px;
+    height: 50px;
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    background-color: #243B55;
+}
+
+.delete-dialog > div{
+    display: flex;
+}
+
+.delete-dialog button{
+    background-color: rgba(255, 255, 255, 1);
+    width: 50%;
+    margin: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.delete-dialog button:hover{
+    background-color: rgba(155, 0, 0, 1);
+    color: #fff;
+}
+
+#restore{
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+}
+
+#restore svg:hover{
+    fill: rgba(0, 200, 0, 1) !important;
+}
+
+#delete{
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    padding-left: 10px;
+}
+
+#delete svg:hover{
+    fill: rgba(155, 0, 0, 0.6) !important;
 }
 
 /* Footer */
