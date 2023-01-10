@@ -19,13 +19,13 @@
     </nav>
     <main>
         <div class="strongbox-content">
-            <section>
-                <div>
+            <section class="left-content">
+                <div class="strongbox-first-row">
                     <h1>FILTROS</h1>
                 </div>
                 
-                <div>
-                    <input type="search" id="search" placeholder="buscar elemento">
+                <div class="strongbox-second-row">
+                    <input type="search" id="search" placeholder="buscar elemento" class="search-input">
                     <ul>
                         <li>
                             <span>
@@ -44,7 +44,7 @@
                         </li>
                     </ul>
                 </div>
-                <div>
+                <div class="strongbox-third-row">
                     <ul>
                         <li><button class="filter-button" id="all-items"><i><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="fill: #2d4969;--darkreader-inline-fill: #e8e6e3;" data-darkreader-inline-fill=""><path d="M20 3H4a2 2 0 0 0-2 2v2a2 2 0 0 0 1 1.72V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.72A2 2 0 0 0 22 7V5a2 2 0 0 0-2-2zM4 5h16v2H4zm1 14V9h14v10z"></path><path d="M8 11h8v2H8z"></path></svg></i>
                         Todos los elementos</button></li>
@@ -55,15 +55,13 @@
                     </ul>
                 </div>
             </section>
-            <section>
+            <section class="right-content">
                 <div id="new-item-section">
                     <h2 id="items-section">Elementos de caja fuerte</h2>
-                    <button id="add-button" class="button"><i></i>
+                    <button id="add-button" class="button">
                         Añadir elemento
                     </button>
                 </div>
-                <!-- A IMPLEMENTAR LISTA DE ELEMENTOS CON JAVASCRIPT -->
-                <!-- Los elementos que agregue el usuario se guardan en una base de datos local, y se muestran en la lista. Cuando no hayan elementos, se muestra un mensaje referente -->
                 <table id="strongbox-items" class="strongbox-items">
                     <!-- ELEMENTOS DE LA CAJA FUERTE -->
                 </table>
@@ -74,6 +72,7 @@
         <span>© StrongBox 2022</span>
         <span>Versión 2022.0.1</span>
     </footer>
+    <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js"></script> <!-- Stanford Javascript Crypto Library -->
     <script src="./js/main.js" type="module"></script>
 </body>
 </html>

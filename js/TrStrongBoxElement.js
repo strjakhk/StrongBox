@@ -25,11 +25,17 @@ export class TrStrongBoxElement{
         return JSON.stringify({
             url : this.url.value,
             user : this.user,
-            pass : this.pass.value,
+            pass : this.#cypherPassword(this.pass.value),
             des : this.description,
             fav : this.inFav,
             trash : this.inTrash
         })
+    }
+
+    #cypherPassword(pass){
+        const cipherPassWithParameters = JSON.parse(sjcl.encrypt("pass", pass, { salt : 'mysalt'}))
+        const cipherPassWithOutParameters = (cipherPassWithParameters.iv + cipherPassWithParameters.salt + cipherPassWithParameters.ct).split('').reverse().join('')
+        return cipherPassWithOutParameters
     }
 
     // Getters & Setters

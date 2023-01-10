@@ -113,13 +113,31 @@ function readStorage(){
         items.push(new TrStrongBoxElement(
             itemFromStorage.url,
             itemFromStorage.user,
-            itemFromStorage.pass,
+            decryptPassword(itemFromStorage.pass),
             itemFromStorage.des,
             itemFromStorage.fav,
             itemFromStorage.trash
         ))        
     }
     return items
+}
+
+function decryptPassword(cipherPass){
+    const encryptedPass = {
+        iv : cipherPass.split('').reverse().join('').slice(0, 24),
+        v : 1,
+        iter : 10000,
+        ks: 128,
+        ts : 64,
+        mode: "ccm",
+        adata : "",
+        cipher : "aes",
+        salt : cipherPass.split('').reverse().join('').slice(24, 32),
+        ct : cipherPass.split('').reverse().join('').slice(32)
+    }
+
+    const decryptedPass = sjcl.decrypt("pass", JSON.stringify(encryptedPass))
+    return decryptedPass
 }
 
 // Añadir item al storage o actualizar storage  
