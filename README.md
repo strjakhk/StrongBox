@@ -6,7 +6,7 @@ Strong Box project
 
 StrongBox es un gestor de Contraseñas local, una "caja fuerte". Inspirado en gestores como 1Password o KeePass.
 El usuario puede agregar un elemento en la caja fuerte, cada elemento va a incluir una url, un usuario de logueo y una contraseña, junto con un icono que representa a la web que se está guardando.
-Los elementos de la caja fuerte van a guardarse en una base de datos local. Las contraseñas en esta base de datos local estarán cirfradas.
+Los elementos de la caja fuerte van a guardarse en una base de datos local. Las contraseñas en esta base de datos local estarán cifradas.
 
 También cuenta con una herramienta para generar contraseñas, otra para exportar todos los datos del usuario en un JSON y una herramienta para importar datos de usuarios.
 
