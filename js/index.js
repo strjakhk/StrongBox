@@ -1,20 +1,15 @@
-import { TrStrongBoxElement } from "./TrStrongBoxElement.js"
-
 // Mostrar items
 
 showItems(filterShowableItems())
-sessionStorage.setItem("whereIam", "all")
 
 function showItems(list){
     const table = document.getElementById('strongbox-items')
     if(list.length > 0){
-        document.getElementById("item-count").innerText = list.length
+        document.getElementById("item-count").innerText = list.length // contador de items (se muestra siempre en pantalla)
         table.innerHTML = ""
         list.forEach(item =>{
             table.appendChild(item.htmlTableRowElement)
-
-            // Listeners para FAV, DELETE y PASS
-            !item.inTrash ? generateListenersOnNormalItem(item) : generateListenersOnItemInTrash(item)
+            !item.inTrash ? generateListenersOnNormalItem(item) : generateListenersOnItemInTrash(item) // Generar listeners para FAV, DELETE y PASS
         })
     }else{
         showNoElementsMessage(table)
@@ -24,8 +19,9 @@ function showItems(list){
 function showNoElementsMessage(table){
     document.getElementById("item-count").innerText = 0
     table.innerHTML = `
-    <div>
-        <h1>No hay elementos que mostrar</h1>
+    <div class="empty-message-box">
+        <h2>Nothing found</h2>
+        <img src="../images/nothing-found-icon.png" alt="tumbleweed">
     </div>
     `
 }
@@ -35,64 +31,66 @@ function generateListenersOnNormalItem(item){
 
     // Papelera
     buttons[0].onclick = () =>{
-        !item.inTrash ? item.inTrash = true : item.inTrash = false
+        if(!item.inTrash){
+            item.inTrash = true
+            alertify.warning("item en papelera")
+        }else{
+            item.inTrash = false
+        }
         updateStorage(item)
+        showItems(filterShowableItems())
     }
     
     // Favoritos
     buttons[1].onclick = () =>{
-        !item.inFav ? item.inFav = true : item.inFav = false
+        if(!item.inFav){
+            item.inFav = true
+            alertify.message("agregado a favoritos")
+        }else{
+            item.inFav = false
+        }
+
         updateStorage(item)
+        JSON.parse(sessionStorage.getItem("whereIam")).place == "fav" ? showItems(filterFavoriteItems()) : showItems(filterShowableItems())
     }
 
     // Copiar contraseña al clipboard
     buttons[2].onclick = () =>{
         navigator.clipboard.writeText(item.pass.value)
+        alertify.success("contraseña copiada")
     }
 }
 
 function generateListenersOnItemInTrash(item){
     const buttons  = [...item.htmlTableRowElement.getElementsByTagName("button")]
 
+    // Restaurar
     buttons[0].onclick = () =>{
         item.inTrash = false
         updateStorage(item)
         showItems(filterInTrashItems())
+        alertify.success("item restaurado!")
     }
 
+    // Borrar permanentemente del Localstorage
     buttons[1].onclick = () =>{
-        const deleteDialog = document.createElement("div")
-        deleteDialog.classList.add("delete-dialog")
-        document.getElementById("restore-and-delete-content").appendChild(deleteDialog)
-        deleteDialog.innerHTML = `
-            <span>borrar?</span>
-            <div>
-                <button type="button" id="yes">si</button>
-                <button type="button" id="no">no</button>
-            </div>       
-        `
-        document.getElementById("yes").onclick = () =>{
+        alertify.confirm("strongbox", "Eliminar permanentemente?",
+        function(){
+            alertify.warning("elemento eliminado")
             localStorage.removeItem(item.url.domain)
             showItems(filterInTrashItems())
-        }
-
-        document.getElementById("no").onclick = () =>{
-            deleteDialog.remove()
-        }
+        },
+        function(){
+            alertify.message("acción cancelada")
+        })
     }
-}
-
-// leer items de storage, filtrando los favoritos
-
-function filterFavoriteItems(){
-    const itemsFound = filterShowableItems().filter(item => item.inFav )
-    return itemsFound
 }
 
 // leer items de storage, filtrando los que están en papelera
 
 function filterInTrashItems(){
     const itemsFound = readStorage().filter(item => item.inTrash)
+    sessionStorage.setItem("whereIam", JSON.stringify({ place : "trash", isEmpty : itemsFound.length > 0 ? false : true}))
     return itemsFound
 }
 
@@ -100,71 +98,36 @@ function filterInTrashItems(){
 
 function filterShowableItems(){
     const itemsFound = readStorage().filter(item => !item.inTrash)
+    sessionStorage.setItem("whereIam", JSON.stringify({ place : "all", isEmpty : itemsFound.length > 0 ? false : true}))
     return itemsFound
 }
 
-// función para leer todos los items de la storage, sin filtrar alguno
+// leer items de storage, filtrando los favoritos
 
-function readStorage(){
-    const items = []
-    for(let i = 0; i < localStorage.length; i++){
-        const itemKey = localStorage.key(i)
-        const itemFromStorage = JSON.parse(localStorage.getItem(itemKey))
-        items.push(new TrStrongBoxElement(
-            itemFromStorage.url,
-            itemFromStorage.user,
-            decryptPassword(itemFromStorage.pass),
-            itemFromStorage.des,
-            itemFromStorage.fav,
-            itemFromStorage.trash
-        ))        
-    }
-    return items
-}
-
-function decryptPassword(cipherPass){
-    const encryptedPass = {
-        iv : cipherPass.split('').reverse().join('').slice(0, 24),
-        v : 1,
-        iter : 10000,
-        ks: 128,
-        ts : 64,
-        mode: "ccm",
-        adata : "",
-        cipher : "aes",
-        salt : cipherPass.split('').reverse().join('').slice(24, 32),
-        ct : cipherPass.split('').reverse().join('').slice(32)
-    }
-
-    const decryptedPass = sjcl.decrypt("pass", JSON.stringify(encryptedPass))
-    return decryptedPass
-}
-
-// Añadir item al storage o actualizar storage  
-
-function updateStorage(item){
-    localStorage.setItem(item.url.domain, item.toJson())
-    showItems(filterShowableItems())
+function filterFavoriteItems(){
+    const itemsFound = filterShowableItems().filter(item => item.inFav )
+    sessionStorage.setItem("whereIam", JSON.stringify({ place : "fav", isEmpty : itemsFound.length > 0 ? false : true}))
+    return itemsFound
 }
 
 // Buscar items 
 
 document.getElementById("search").oninput = (e) =>{
     let itemsFound = []
-    const whereIam = sessionStorage.getItem("whereIam")
-    if(whereIam == "fav"){
+    const whereIam = JSON.parse(sessionStorage.getItem("whereIam"))
+    if(whereIam.place == "fav"){
         itemsFound = filterFavoriteItems().filter((item) =>{
             return item.url.value.match(e.target.value) || item.user.match(e.target.value)
         })
     }
 
-    if(whereIam == "trash"){
+    if(whereIam.place == "trash"){
         itemsFound = filterInTrashItems().filter((item) =>{
             return item.url.value.match(e.target.value) || item.user.match(e.target.value)
         })
     }
 
-    if(whereIam == "all"){
+    if(whereIam.place == "all"){
         itemsFound = filterShowableItems().filter((item) =>{
             return item.url.value.match(e.target.value) || item.user.match(e.target.value)
         })
@@ -176,7 +139,6 @@ document.getElementById("search").oninput = (e) =>{
 // Mostrar todos los items
 
 document.getElementById("show-all").onclick = () =>{
-    sessionStorage.setItem("whereIam", "all")
     document.getElementById("items-section").innerText = "Elementos de caja fuerte"
     showItems(filterShowableItems())
 }
@@ -184,7 +146,6 @@ document.getElementById("show-all").onclick = () =>{
 // Mostrar todos los items (desde el botón)
 
 document.getElementById("all-items").onclick = () =>{
-    sessionStorage.setItem("whereIam", "all")
     document.getElementById("items-section").innerText = "Elementos de caja fuerte"
     showItems(filterShowableItems())
 }
@@ -192,7 +153,6 @@ document.getElementById("all-items").onclick = () =>{
 // Mostrar favoritos
 
 document.getElementById("favorites").onclick = () =>{
-    sessionStorage.setItem("whereIam", "fav")
     document.getElementById("items-section").innerText = "Favoritos"
     showItems(filterFavoriteItems())
 }
@@ -200,7 +160,6 @@ document.getElementById("favorites").onclick = () =>{
 // Mostrar papelera 
 
 document.getElementById("trash").onclick = () =>{
-    sessionStorage.setItem("whereIam", "trash")
     document.getElementById("items-section").innerText = "Papelera"
     showItems(filterInTrashItems())
 }
@@ -223,9 +182,29 @@ document.getElementById("add-button").onclick = () => {
         <input type="text" name="user" id="user" placeholder=" usuario" required>
         <input type="password" name="pass" id="pass" placeholder=" contraseña" required>
         <input type="text" name="description" id="description" placeholder=" descripcion" required>
-        <input type="submit" value="agregar">
+        <div class="submit-and-pw">
+            <input type="submit" form="add-button-form" value="agregar">
+            <div class="pwgenerator">
+                <div>
+                    <span>generador de contraseña</span>
+                    <span id="passwd"></span>
+                </div>
+                <button type="button" id="pwgenerator">generar</button>
+            </div>
+        </div>
+        
     </form>
     `
+
+    document.getElementById("pwgenerator").onclick = (e) =>{
+        e.target.disabled = true
+        fetch("https://makemeapassword.ligos.net/api/v1/alphanumeric/json?c=1&l=14&sym=y")
+        .then(response => response.json())
+        .then(json => {
+            document.getElementById("passwd").innerText = json.pws[0]
+            e.target.disabled = false
+        })
+    }
 
     document.getElementById("close").onclick = () =>{
         document.querySelector(".add-form").remove()
@@ -234,25 +213,25 @@ document.getElementById("add-button").onclick = () => {
     document.getElementById("add-button-form").onsubmit = (e) =>{
         e.preventDefault()
         const formulario = e.target
-        const inputs = document.querySelectorAll("#add-button-form input")
+        const inputs = document.querySelectorAll("#add-button-form input")        
 
-        if(formulario.checkValidity()){ // uso checkValidity para la primer capa de validación con html5 (atributos required)
-            if(!/\.\w{2,4}$/g.test(inputs[0].value)){
+        if(formulario.checkValidity()){ // checkValidity para la primer capa de validación con html5 (atributos required) y expresiones regulares en la segunda capa
+            if(!/\.\w{2,5}$/g.test(inputs[0].value)){
                 inputErrorMessage(inputs[0])
                 return
             }
             
-            if(!/\S{3,}/g.test(inputs[1].value)){                
+            if(!/^\S{3,30}$/g.test(inputs[1].value)){                
                 inputErrorMessage(inputs[1])
                 return
             }
     
-            if(/\s{1,}/g.test(inputs[2].value)){                
+            if(/^\s{1,}/g.test(inputs[2].value)){                
                 inputErrorMessage(inputs[2])
                 return
             }
     
-            if(inputs[3].value.length > 12){                
+            if(!/^.{1,40}$/g.test(inputs[3].value)){
                 inputErrorMessage(inputs[3])
                 return
             }
@@ -267,6 +246,7 @@ document.getElementById("add-button").onclick = () => {
             )
             formulario.parentElement.remove()
             updateStorage(newItem)
+            showItems(filterShowableItems())
         }
     }
 
@@ -276,24 +256,24 @@ document.getElementById("add-button").onclick = () => {
     
         switch(input.name){
             case "url":
-                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                errorDialog.innerText = `Error en el campo: [${input.name}]\nEl formato del dominio debe ser [https://dominio.extension]`
                 break
 
             case "user":
-                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                errorDialog.innerText = `Error en el campo: [${input.name}]\nEl usuario debe contener entre 3 y 30 caracteres (sin espacios)`
                 break
 
             case "pass":
-                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                errorDialog.innerText = `Error en el campo: [${input.name}]\nLa contraseña no puede contener espacios`
                 break
 
             case "description":
-                errorDialog.textContent = `Error en el campo: [${input.name}]`
+                errorDialog.innerText = `Error en el campo: [${input.name}]\nDescripción demasiado larga, debe ttener un maximo de 40 caracteres`
                 break
 
             default:
                 errorDialog.classList.remove("error-dialog")
-                errorDialog.textContent = `Agregar nuevo elemento`
+                errorDialog.innerText = `Agregar nuevo elemento`
         }
     }
 }

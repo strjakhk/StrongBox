@@ -1,4 +1,4 @@
-export class TrStrongBoxElement{
+class TrStrongBoxElement{
     constructor(url, user, pass, des, fav, trash){
         this.url = url
         this.user = user
@@ -25,17 +25,11 @@ export class TrStrongBoxElement{
         return JSON.stringify({
             url : this.url.value,
             user : this.user,
-            pass : this.#cypherPassword(this.pass.value),
+            pass : encryptPassword(this.pass.value),
             des : this.description,
             fav : this.inFav,
             trash : this.inTrash
         })
-    }
-
-    #cypherPassword(pass){
-        const cipherPassWithParameters = JSON.parse(sjcl.encrypt("pass", pass, { salt : 'mysalt'}))
-        const cipherPassWithOutParameters = (cipherPassWithParameters.iv + cipherPassWithParameters.salt + cipherPassWithParameters.ct).split('').reverse().join('')
-        return cipherPassWithOutParameters
     }
 
     // Getters & Setters
@@ -46,8 +40,8 @@ export class TrStrongBoxElement{
     set url(url){
         this._url = {
             value : url,
-            domain : url.startsWith('https://') ? url.slice(8) : url.slice(7),
-            icon : url + '/favicon.ico'
+            domain : url.startsWith('https') ? url.slice(8) : url.slice(7),
+            icon : url + "/favicon.ico"
         }
     }
 
@@ -94,7 +88,7 @@ export class TrStrongBoxElement{
 
         if(!data.trash){
             this._htmlTableRowElement.innerHTML = `\
-            <td class="td-list-element"><i class="url-icon"><img src="${data.url.icon}" alt="url icon" width="24" height="24"></i></td>
+            <td class="td-list-element"><i class="url-icon"><img src="${data.url.icon}" alt="" width="24" height="24"></i></td>
             <td class="td-list-element"><a href="${data.url.value}" target="_blank">${data.url.domain}</a>${data.user}</td>
             <td class="td-list-element">${data.des}</td>
 
@@ -102,7 +96,7 @@ export class TrStrongBoxElement{
 
             <button type="button"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(155, 155, 155, 1);transform: ;msFilter:;"><path d="M5 20a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8h2V6h-4V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3v2h2zM9 4h6v2H9zM8 8h9v12H7V8z"></path><path d="M9 10h2v8H9zm4 0h2v8h-2z"></path></svg></i></button>
 
-            <button type="button" id="fav"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: ${data.fav ? 'rgba(155, 155, 0, 1)' : 'rgba(155, 155, 155, 1)'};transform: ;msFilter:;"><path d="M21.947 9.179a1.001 1.001 0 0 0-.868-.676l-5.701-.453-2.467-5.461a.998.998 0 0 0-1.822-.001L8.622 8.05l-5.701.453a1 1 0 0 0-.619 1.713l4.213 4.107-1.49 6.452a1 1 0 0 0 1.53 1.057L12 18.202l5.445 3.63a1.001 1.001 0 0 0 1.517-1.106l-1.829-6.4 4.536-4.082c.297-.268.406-.686.278-1.065z"></path></svg></i></button>
+            <button type="button" id="fav"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: ${data.fav ? 'rgba(153, 121, 40, 1)' : 'rgba(155, 155, 155, 1)'};transform: ;msFilter:;"><path d="M21.947 9.179a1.001 1.001 0 0 0-.868-.676l-5.701-.453-2.467-5.461a.998.998 0 0 0-1.822-.001L8.622 8.05l-5.701.453a1 1 0 0 0-.619 1.713l4.213 4.107-1.49 6.452a1 1 0 0 0 1.53 1.057L12 18.202l5.445 3.63a1.001 1.001 0 0 0 1.517-1.106l-1.829-6.4 4.536-4.082c.297-.268.406-.686.278-1.065z"></path></svg></i></button>
 
             <button type="button" id="pass"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(155, 155, 155, 1);transform: ;msFilter:;"><path d="M14 8H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2V10c0-1.103-.897-2-2-2z"></path><path d="M20 2H10a2 2 0 0 0-2 2v2h8a2 2 0 0 1 2 2v8h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path></svg></i></button>
         
@@ -111,7 +105,7 @@ export class TrStrongBoxElement{
         }else{
             this._htmlTableRowElement.className = "trash-tr"
             this._htmlTableRowElement.innerHTML = `\
-            <td class="td-list-element"><span><img src="${data.url.icon}" alt="${data.url.domain}"width="24px" hieght="24px"></span></td>
+            <td class="td-list-element"><span><img src="${data.url.icon}" alt=""width="24px" hieght="24px"></span></td>
             <td class="td-list-element"><span>${data.url.domain}</span></td>
             <td class="td-list-element" id="restore-and-delete-content">
                 <button type="button" id="restore"><i><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(0, 155, 0, 0.8);transform: ;msFilter:;"><path d="M21 11H6.414l5.293-5.293-1.414-1.414L2.586 12l7.707 7.707 1.414-1.414L6.414 13H21z"></path></svg></i></button>
