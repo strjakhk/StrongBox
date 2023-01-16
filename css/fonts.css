@@ -1,0 +1,29 @@
+@font-face {
+    font-family: RobotoSlab-Light;
+    src: url(../fonts/roboto_slab/RobotoSlab-Light.ttf);
+}
+
+@font-face {
+    font-family: RobotoSlab-Medium;
+    src: url(../fonts/roboto_slab/RobotoSlab-Medium.ttf);
+}
+
+@font-face {
+    font-family: RobotoSlab-Regular;
+    src: url(../fonts/roboto_slab/RobotoSlab-Regular.ttf);
+}
+
+@font-face {
+    font-family: RobotoSlab-SemiBold;
+    src: url(../fonts/roboto_slab/RobotoSlab-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: RobotoSlab-Thin;
+    src: url(../fonts/roboto_slab/RobotoSlab-Thin.ttf);
+}
+
+@font-face {
+    font-family: RobotoSlab-Bold;
+    src: url(../fonts/roboto_slab/RobotoSlab-Bold.ttf);
+}
