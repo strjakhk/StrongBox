@@ -4,15 +4,19 @@ function readStorage(){
     const items = []
     for(let i = 0; i < localStorage.length; i++){
         const itemKey = localStorage.key(i)
-        const itemFromStorage = JSON.parse(localStorage.getItem(itemKey))
-        items.push(new TrStrongBoxElement(
+        try{
+            const itemFromStorage = JSON.parse(localStorage.getItem(itemKey))
+            items.push(new TrStrongBoxElement(
             itemFromStorage.url,
             itemFromStorage.user,
             decryptPassword(itemFromStorage.pass),
             itemFromStorage.des,
             itemFromStorage.fav,
             itemFromStorage.trash
-        ))        
+        ))
+        }catch(error){
+            continue
+        }        
     }
     return items
 }
