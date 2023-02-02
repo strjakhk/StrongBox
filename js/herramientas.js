@@ -48,13 +48,17 @@ function getAllData(){
     const storageLength = localStorage.length
     for(let i = 0; i < storageLength; i++){
         const key = localStorage.key(i)
-        const item = JSON.parse(localStorage.getItem(key))
-        items.push({
+        try{
+            const item = JSON.parse(localStorage.getItem(key))
+            items.push({
             url : item.url,
             user : item.user,
             pass : decryptPassword(item.pass),
             description : item.des
         })
+        }catch(error){
+            continue
+        }        
     }
     return items
 }
